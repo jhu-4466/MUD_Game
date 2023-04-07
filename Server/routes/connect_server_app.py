@@ -17,8 +17,8 @@ import tornado.ioloop
 
 import base64
 import hashlib
-from functools import partial
 import logging
+import datetime
 
 
 class Game_Server:
@@ -89,17 +89,17 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
         """
         self.write_message("Welcome to the server!")
         
-        # 获取握手请求头信息
+        # get Headers message by shaking hands.
         headers = request.headers
         key = headers.get('Sec-WebSocket-Key')
         
-        # 如果没有 Sec-WebSocket-Key 头信息，返回错误状态码
+        # if there is not Sec-WebSocket-Key on headers, return 404
         if not key:
             self.set_status(400)
             self.finish("Invalid WebSocket request")
             return
         
-        # 生成 Sec-WebSocket-Accept 响应头信息
+        # build Sec-WebSocket-Accept Headers 
         key = key + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
         hash = hashlib.sha1(key.encode())
         key = base64.b64encode(hash.digest()).strip().decode('utf-8')
@@ -112,7 +112,7 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
         }
 
-        self.set_status(101)  # 状态码为 101，表示握手成功
+        self.set_status(101)  # it means shaking hands successfully.
         for key, value in headers.items():
             self.set_header(key, value)
 
@@ -122,6 +122,7 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection running.
         
         """
+        logging.info("someone connects now.")
         self.game_server.add_client(self)
         
     def on_close(self):
@@ -130,6 +131,7 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection closing.
         
         """
+        logging.info("someone quits now.")
         self.game_server.remove_client(self)
         
     def on_message(self, message):
@@ -138,7 +140,8 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket message.
         
         """
-        self.game_server.broadcast(message)
+        logging.info(message)
+        self.game_server.broadcast()
 
 
 class Tornado_Server_App:
@@ -175,4 +178,9 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     test_game_server_app = Game_Server()
     test_server_app = Tornado_Server_App(test_game_server_app)
-    test_server_app.start()
+    
+    try:
+        test_server_app.start()
+    except KeyboardInterrupt:
+        import sys
+        sys.exit()
