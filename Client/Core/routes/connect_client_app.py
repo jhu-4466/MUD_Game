@@ -12,9 +12,11 @@
 # -----------------------------
 
 
-import asyncio
 import tornado.ioloop
 import tornado.websocket
+
+import asyncio
+import threading
 
 
 class Tornado_Client_App:
@@ -116,6 +118,24 @@ class Tornado_Client_App:
         """
         if type(message) == str:
             print(f"Received message: {message}")
+
+
+class Tornado_Thread(threading.Thread):
+    """_summary_
+    
+    To avoid the stoppage between pyqt and tornado.
+    
+    Attributes:
+        client: Tornado_Client_App
+    """
+    def __init__(self, _client: Tornado_Client_App):
+        threading.Thread.__init__(self)
+        
+        self.client = _client
+
+    def run(self):
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        self.client.start()
 
 
 if __name__ == "__main__":
