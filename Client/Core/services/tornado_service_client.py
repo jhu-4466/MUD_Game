@@ -19,7 +19,7 @@ import asyncio
 import threading
 
 
-class Tornado_Client_App:
+class TornadoClientApp:
     """_summary_
     
     The client end connecting to the server.
@@ -120,15 +120,15 @@ class Tornado_Client_App:
             print(f"Received message: {message}")
 
 
-class Tornado_Thread(threading.Thread):
+class TornadoThread(threading.Thread):
     """_summary_
     
     To avoid the stoppage between pyqt and tornado.
     
     Attributes:
-        client: Tornado_Client_App
+        client: TornadoClientApp
     """
-    def __init__(self, _client: Tornado_Client_App):
+    def __init__(self, _client: TornadoClientApp):
         threading.Thread.__init__(self)
         
         self.client = _client
@@ -140,7 +140,7 @@ class Tornado_Thread(threading.Thread):
 
 if __name__ == "__main__":
     url = "ws://127.0.0.1:8080/websocket"
-    test_client = Tornado_Client_App(url)
+    test_client = TornadoClientApp(url)
 
     try:
         test_client.start()

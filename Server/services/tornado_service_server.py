@@ -21,7 +21,7 @@ import logging
 import datetime
 
 
-class Game_Server:
+class GameServer:
     """_summary_
     
     it tackles the core logics about game server.
@@ -64,7 +64,7 @@ class Game_Server:
             client.write_message(message)
 
 
-class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
+class TornadoMainHandler(tornado.websocket.WebSocketHandler):
     """_summary_
     
     Handles the WebSocket connection.
@@ -150,7 +150,7 @@ class Tornado_Main_Handler(tornado.websocket.WebSocketHandler):
         self.game_server.broadcast()
 
 
-class Tornado_Server_App:
+class TornadoServerApp:
     """_summary_
     
     it controls the tornado server end.
@@ -159,10 +159,10 @@ class Tornado_Server_App:
         game_server: it includes the core logics of the games
         _app: it is a real example about web app
     """
-    def __init__(self, game_server: Game_Server):
+    def __init__(self, game_server: GameServer):
         self.game_server = game_server
         self._app = tornado.web.Application([
-            (r"/websocket", Tornado_Main_Handler, dict(game_server=self.game_server)),  # the application has the only rout rule of websocket
+            (r"/websocket", TornadoMainHandler, dict(game_server=self.game_server)),  # the application has the only rout rule of websocket
         ],
         template_path="templates", static_path="static",  # specify the folder path about template, static
         websocket_compression_options = {},  # Prohibit the compression
@@ -182,8 +182,8 @@ class Tornado_Server_App:
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
-    test_game_server_app = Game_Server()
-    test_server_app = Tornado_Server_App(test_game_server_app)
+    test_game_server_app = GameServer()
+    test_server_app = TornadoServerApp(test_game_server_app)
     
     try:
         test_server_app.start()
