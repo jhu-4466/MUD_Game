@@ -36,7 +36,9 @@ class Game_Server:
         """_summary_
         
         Add the client into the game server.
-        
+
+        Attributes:
+            client: Tornado_Client_App
         """
         self.clients_list.add(client)
     
@@ -45,6 +47,8 @@ class Game_Server:
         
         Remove the client into the game server.
         
+        Attributes:
+            client: Tornado_Client_App
         """
         self.clients_list.remove(client)
     
@@ -53,6 +57,8 @@ class Game_Server:
         
         a connect test.
         
+        Attributes:
+            message: send message to client.
         """
         for client in self.clients_list:
             client.write_message(message)

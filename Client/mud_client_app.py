@@ -11,8 +11,8 @@
 # -----------------------------
 
 
-from Core.editor.editor_app import Editor_Main_Window
-from Core.routes.connect_client_app import Tornado_Client_App, Tornado_Thread
+from core.editor.editor_app import Editor_Main_Window
+from core.routes.connect_client_app import Tornado_Client_App, Tornado_Thread
 
 from PyQt5.QtWidgets import QApplication
 
