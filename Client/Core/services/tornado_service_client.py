@@ -38,16 +38,16 @@ class TornadoServiceClient:
         self.is_connecting = False
         self.keep_alive_callback = None
 
-    def start(self):
+    def on_start(self):
         """_summary_
         
         Connect to server, all internet communications belongs the same ioloop.
         
         """
-        self.ioloop.run_sync(self.connect)
+        self.ioloop.run_sync(self.on_connect)
         self.ioloop.start()
 
-    async def connect(self):
+    async def on_connect(self):
         """_summary_
         
         The core logic of connecting.
@@ -64,18 +64,18 @@ class TornadoServiceClient:
         except Exception as e:
             print(f"Failed to connect to {self.url}: {e}")
 
-    def close(self):
+    def on_close(self):
         """_summary_
         
         Close connection.
         
         """
-        if self.websocket is not None and self.is_connecting:
+        if self.websocket:
             self.keep_alive_callback.stop()
             self.websocket.close()
             self.ioloop.stop()
 
-            self.is_connecting = False
+        self.is_connecting = False
 
     def keep_alive(self):
         """_summary_
@@ -135,14 +135,14 @@ class TornadoThread(threading.Thread):
 
     def run(self):
         asyncio.set_event_loop(asyncio.new_event_loop())
-        self.client.start()
+        self.client.on_start()
 
 
-if __name__ == "__main__":
-    url = "ws://127.0.0.1:8080/websocket"
-    test_client = TornadoServiceClient(url)
+# if __name__ == "__main__":
+#     url = "ws://127.0.0.1:8080/websocket"
+#     test_client = TornadoServiceClient(url)
 
-    try:
-        test_client.start()
-    except KeyboardInterrupt:
-        test_client.close()
+#     try:
+#         test_client.on_start()
+#     except KeyboardInterrupt:
+#         test_client.on_close()

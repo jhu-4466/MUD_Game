@@ -2,23 +2,23 @@
 
 # -----------------------------
 # Topic: actor information plugin
-# Author: k14
+# Author: motm14
 # Created: 2023.04.10
 # Description: actor information plugin
 # History:
 #    <autohr>    <version>    <time>        <desc>
-#    k14         v0.1         2023/04/10    build the basic
+#    motm14         v0.1         2023/04/10    build the basic
 # -----------------------------
 
 
 from core.editor.apis.plugins import DockableLocationEnum, DockablePluginBase
-from .widgets import ActorInformationWidget
+from .widgets import ActorAttributesWidget
 
 
-class ActorInformation(DockablePluginBase):
-    NAME = "actor_information"
-    WIDGET_CLASS = ActorInformationWidget
+class ActorAttributes(DockablePluginBase):
+    NAME = "actor_attributes"
+    WIDGET_CLASS = ActorAttributesWidget
     DOCK_LOCATION = DockableLocationEnum.LEFT
     
     def get_title(self):
-        return "角色信息"
+        return "角色属性"

@@ -7,7 +7,7 @@
 # Description: the base class about widget
 # History:
 #    <autohr>    <version>    <time>        <desc>
-#    k14         v0.1         2023/04/10    build the basic
+#    motm14         v0.1         2023/04/10    build the basic
 # -----------------------------
 
 
