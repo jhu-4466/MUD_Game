@@ -55,15 +55,16 @@ class TornadoServiceClient:
         """
         try:
             self.websocket = await tornado.websocket.websocket_connect(self.url)
-            self.ioloop.add_callback(self.listen)
-            self.keep_alive_callback = tornado.ioloop.PeriodicCallback(self.keep_alive, 5000)
-            self.keep_alive_callback.start()
+            if self.websocket:
+                self.ioloop.add_callback(self.listen)
+                self.keep_alive_callback = tornado.ioloop.PeriodicCallback(self.keep_alive, 5000)
+                self.keep_alive_callback.start()
 
-            self.is_connecting = True
-            print(f"Succeed to connect to {self.url}")
+                self.is_connecting = True
+                print(f"Succeed to connect to {self.url}")
         except Exception as e:
             print(f"Failed to connect to {self.url}: {e}")
-
+        
     def on_close(self):
         """_summary_
         
@@ -73,8 +74,8 @@ class TornadoServiceClient:
         if self.websocket:
             self.keep_alive_callback.stop()
             self.websocket.close()
-            self.ioloop.stop()
-
+        
+        self.ioloop.add_callback(self.ioloop.stop)
         self.is_connecting = False
 
     def keep_alive(self):

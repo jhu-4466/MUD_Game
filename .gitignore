@@ -1,2 +1,7 @@
+# pycache
+__pycache__
+*.pyc
+
+# Docs
 Docs/*.xcf
 Docs/*.odt
