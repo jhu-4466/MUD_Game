@@ -55,7 +55,7 @@ class EditorMainWindow(QMainWindow):
         widget = plugin.widget
         dock_widget = QDockWidget(plugin.NAME, self)
         dock_widget.setWidget(widget)
-        dock_widget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea | Qt.TopDockWidgetArea)
+        dock_widget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)  #  | Qt.TopDockWidgetArea
 
         if plugin.DOCK_LOCATION == DockableLocationEnum.LEFT:
             self.addDockWidget(Qt.LeftDockWidgetArea, dock_widget)
