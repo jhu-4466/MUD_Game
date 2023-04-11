@@ -150,7 +150,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         self.game_server.broadcast()
 
 
-class TornadoServerApp:
+class TornadoServiceServer:
     """_summary_
     
     it controls the tornado server end.
@@ -183,7 +183,7 @@ class TornadoServerApp:
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     test_game_server_app = GameServer()
-    test_server_app = TornadoServerApp(test_game_server_app)
+    test_server_app = TornadoServiceServer(test_game_server_app)
     
     try:
         test_server_app.start()
