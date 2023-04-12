@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*- #
+
+# -----------------------------
+# Topic: sky eye session
+# Author: m14
+# Created: 2023.04.11
+# Description: maintains sky eye session list
+# History:
+#    <autohr>    <version>    <time>        <desc>
+#    m14         v0.1         2023/04/11    basic build
+# -----------------------------
+
+
+class SESession():
+    """_summary_
+    
+    it holds the session from one client.
+    
+    Attributes:
+        connection: one client connection to server.
+    """
+    next_session_id: int = 1
+    
+    def __init__(self, connection):
+        self.session_id = SESession.next_session_id
+        self.connection = connection
+
+        SESession.next_session_id += 1

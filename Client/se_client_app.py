@@ -11,7 +11,7 @@
 # -----------------------------
 
 
-from core.services.tornado_service_client import TornadoServiceClient, TornadoThread
+from core.services.tornado_service_client import TornadoServiceClient, TornadoClientThread
 
 from core.editor.editor_app import EditorMainWindow
 from core.editor.plugins.actor_attributes.plugins import ActorAttributes
@@ -36,7 +36,7 @@ class SEClientApp:
     """
     def __init__(self, url: str):
         self.editor_app_communication_client = TornadoServiceClient(url)
-        self.editor_app_communication_thread = TornadoThread(
+        self.editor_app_communication_thread = TornadoClientThread(
             self.editor_app_communication_client)
         
         self.editor_app = QApplication([])

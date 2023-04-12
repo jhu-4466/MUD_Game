@@ -2,13 +2,13 @@
 
 # -----------------------------
 # Topic: connect client end with tornado
-# Author: k14
+# Author: m14
 # Created: 2023.04.04
 # Description: holding the control of tornado client to connect with tornado server
 #              ususal port：8080
 # History:
 #    <autohr>    <version>    <time>        <desc>
-#    k14         v0.1         2023/04/07    build the basic
+#    m14         v0.1         2023/04/07    build the basic
 # -----------------------------
 
 
@@ -121,7 +121,7 @@ class TornadoServiceClient:
             print(f"Received message: {message}")
 
 
-class TornadoThread(threading.Thread):
+class TornadoClientThread(threading.Thread):
     """_summary_
     
     To avoid the stoppage between pyqt and tornado.
