@@ -71,10 +71,10 @@ class TornadoServiceServer:
 class TornadoServerThread(threading.Thread):
     """_summary_
     
-    To avoid the stoppage between pyqt and tornado.
+    To avoid the stoppage between tick and tornado.
     
     Attributes:
-        client: TornadoServiceClient
+        ____server____: Tornado Service Server
     """
     def __init__(self, server):
         self.____server____ = server

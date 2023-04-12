@@ -17,6 +17,13 @@ from tools.singleton_type import SingletonType
 
 
 class SEWorld(metaclass=SingletonType):
+    """_summary_
+    
+    Holds the world state
+    
+    Attributes:
+        sessions: tornado connection
+    """
     def __init__(self):
         self.initialize()
     
@@ -27,6 +34,11 @@ class SEWorld(metaclass=SingletonType):
         self.tick()
     
     def tick(self):
+        """_summary_
+        
+        Cycle through the world state, including db, sessions, and so on
+        
+        """
         pass
     
     def on_close(self):

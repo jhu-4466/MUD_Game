@@ -14,13 +14,21 @@
 from core.world.se_world import SEWorld
 from services.tornado_service_server import TornadoServiceServer, TornadoServerThread
 
-import threading
-
 import sys
 import logging
 
 
 class SEServerApp:
+    """_summary_
+    
+    it controls the tornado server end.
+    
+    Attributes:
+        world: game world state
+        tornado_server: tornado server app
+        tornado_server_thread: tornado server thread
+        tornado_logger: tornado logger
+    """
     def __init__(self):
         self.initialize()
     
@@ -41,6 +49,11 @@ class SEServerApp:
         self.tick()
     
     def tick(self):
+        """_summary_
+        
+        Cycle through the server state
+        
+        """
         while True:
             self.world.tick()
 
