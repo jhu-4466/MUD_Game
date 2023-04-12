@@ -14,8 +14,6 @@
 from core.world.se_world import SEWorld
 from services.tornado_service_server import TornadoServiceServer, TornadoServerThread
 
-from tools.base_logger import BaseLogger
-
 import sys
 
 
@@ -34,10 +32,9 @@ class SEServerApp:
         self.initialize()
     
     def initialize(self):
-        self.tornado_logger = BaseLogger('tornado')._logger
-        
         self.world = SEWorld()
-        self.tornado_server = TornadoServiceServer(self.world, self.tornado_logger)
+        
+        self.tornado_server = TornadoServiceServer(self.world)
         self.tornado_server_thread = TornadoServerThread(self.tornado_server)
         
     def start(self):

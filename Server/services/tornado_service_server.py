@@ -31,15 +31,14 @@ class TornadoServiceServer:
         game_server: it includes the core logics of the games
         ____app____: it is a real example about web app
     """
-    def __init__(self, world, logger):
+    def __init__(self, world):
         self.world = world
-        self.logger = logger
         
         self.initialize()
     
     def initialize(self):
         self.____app____ = tornado.web.Application([(r"/websocket", TornadoMainHandler, 
-                                              dict(world=self.world, logger=self.logger)),  # the application has the only rout rule of websocket
+                                              dict(world=self.world)),  # the application has the only rout rule of websocket
                                             ],
                                             template_path="templates", static_path="static",  # specify the folder path about template, static
                                             websocket_compression_options = {},  # Prohibit the compression

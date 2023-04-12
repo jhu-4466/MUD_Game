@@ -58,3 +58,5 @@ class BaseLogger:
         self._logger.addHandler(critical_file_handler)
         
         return self._logger
+    
+tornado_logger = BaseLogger('tornado')
