@@ -14,8 +14,9 @@
 from core.world.se_world import SEWorld
 from services.tornado_service_server import TornadoServiceServer, TornadoServerThread
 
+from tools.base_logger import BaseLogger
+
 import sys
-import logging
 
 
 class SEServerApp:
@@ -33,9 +34,7 @@ class SEServerApp:
         self.initialize()
     
     def initialize(self):
-        logging.basicConfig(level=logging.DEBUG, 
-            format="[%(asctime)s] - [%(levelname)s] - %(message)s")
-        self.tornado_logger = logging.getLogger('tornado')
+        self.tornado_logger = BaseLogger('tornado')._logger
         
         self.world = SEWorld()
         self.tornado_server = TornadoServiceServer(self.world, self.tornado_logger)
@@ -56,7 +55,7 @@ class SEServerApp:
         """
         while True:
             self.world.tick()
-
+        
     def close(self):
         self.tornado_server.on_close()
         self.tornado_server = None
@@ -69,4 +68,3 @@ if __name__ == '__main__':
         server_app.start()
     except KeyboardInterrupt:
         server_app.close()
-        sys.exit()

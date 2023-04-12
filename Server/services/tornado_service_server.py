@@ -61,8 +61,9 @@ class TornadoServiceServer:
         self.____io_loop____.start()
     
     def on_close(self):
-        for session in self.world.sessions.values():
-            session.connection.close()
+        if self.world.sessions:
+            for session in self.world.sessions.values():
+                session.connection.close()
         self.____io_loop____.clear_current()
         self.____io_loop____.stop()
         self.____io_loop____ = None
@@ -75,11 +76,12 @@ class TornadoServerThread(threading.Thread):
     
     Attributes:
         ____server____: Tornado Service Server
+        daemon: True means it will close when the main thread close.
     """
     def __init__(self, server):
         self.____server____ = server
         
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
 
     def run(self):
         self.____server____.on_start()

@@ -5,3 +5,6 @@ __pycache__
 # Docs
 Docs/*.xcf
 Docs/*.odt
+
+# logs
+*.log
