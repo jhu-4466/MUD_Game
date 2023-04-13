@@ -56,7 +56,9 @@ class BaseLogger:
         self._logger.addHandler(error_file_handler)
         self._logger.addHandler(warning_file_handler)
         self._logger.addHandler(critical_file_handler)
-        
+    
+    @property
+    def logger(self):
         return self._logger
     
 tornado_logger = BaseLogger('tornado')

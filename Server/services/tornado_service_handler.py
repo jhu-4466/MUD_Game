@@ -84,7 +84,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection running.
         
         """
-        tornado_logger.info("someone connects now.")
+        tornado_logger.logger.info("someone connects now.")
         self.world.add_session(self)
         
     def on_close(self):
@@ -93,7 +93,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection closing.
         
         """
-        tornado_logger.info("someone quits now.")
+        tornado_logger.logger.info("someone quits now.")
         self.world.remove_session(self)
         
     def on_message(self, message):
@@ -102,6 +102,6 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket message.
         
         """
-        tornado_logger.info(message)
+        tornado_logger.logger.info(message)
         self.world.broadcast()
 

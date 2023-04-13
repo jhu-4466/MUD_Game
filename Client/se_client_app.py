@@ -17,10 +17,8 @@ from core.editor.editor_app import EditorMainWindow
 from core.editor.plugins.actor_attributes.plugins import ActorAttributes
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTimer, QEventLoop, QCoreApplication
 
 import sys
-import threading
 
 
 class SEClientApp:
