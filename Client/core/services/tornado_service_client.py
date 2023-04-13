@@ -31,12 +31,12 @@ class TornadoServiceClient:
         is_connecting: the connecting state.
         keep_alive_callback: the keeping alive callback function.
     """
-    def __init__(self, url):
+    def __init__(self, url, reconnect_interval: int=5):
         self.url = url
         self.websocket = None
-        self.ioloop = tornado.ioloop.IOLoop()
-        self.is_connecting = False
+        self.ioloop = tornado.ioloop.IOLoop.current()
         self.keep_alive_callback = None
+        self.reconnect_interval = reconnect_interval
 
     def on_start(self):
         """_summary_
@@ -44,9 +44,9 @@ class TornadoServiceClient:
         Connect to server, all internet communications belongs the same ioloop.
         
         """
-        self.ioloop.make_current()
         try:
             self.ioloop.run_sync(self.on_connect)
+            self.ioloop.start()
         except asyncio.exceptions.TimeoutError:
             # may closes too fast so that producing a timeout error is un
             pass
@@ -64,10 +64,19 @@ class TornadoServiceClient:
                 self.keep_alive_callback = tornado.ioloop.PeriodicCallback(self.keep_alive, 5000)
                 self.keep_alive_callback.start()
 
-                self.is_connecting = True
                 print(f"Succeed to connect to {self.url}")
         except Exception as e:
             print(f"Failed to connect to {self.url}: {e}")
+            self.ioloop.add_timeout(self.ioloop.time() + self.reconnect_interval, self.on_reconnect)
+    
+    def on_reconnect(self):
+        """_summary_
+        
+        The core logic of reconnecting.
+        
+        """
+        print("Try to reconnect to the server...")
+        self.ioloop.spawn_callback(self.on_connect)
         
     def on_close(self):
         """_summary_
@@ -79,12 +88,7 @@ class TornadoServiceClient:
             self.keep_alive_callback.stop()
             self.websocket.close()
         
-        if self.ioloop:
-            self.ioloop.clear_current()
-            self.ioloop.stop()
-            self.ioloop = None
-        
-        self.is_connecting = False
+        self.ioloop.add_callback(self.ioloop.stop)
 
     def keep_alive(self):
         """_summary_
@@ -100,7 +104,7 @@ class TornadoServiceClient:
         Send message to the server.
         
         """
-        if self.websocket is not None and self.is_connecting:
+        if self.websocket:
             self.websocket.write_message(message)
 
     async def listen(self):
@@ -112,9 +116,10 @@ class TornadoServiceClient:
         while True:
             message = await self.websocket.read_message()
             if message is None:
-                print("Disconnected from server")
+                print("Disconnected from server because the server closed, try to reconnect as soon...")
                 self.websocket = None
                 self.keep_alive_callback.stop()
+                self.on_reconnect()
                 break
             await self.handle_message(message)
             await asyncio.sleep(0)
@@ -138,11 +143,12 @@ class TornadoClientThread(threading.Thread):
         client: TornadoServiceClient
     """
     def __init__(self, _client: TornadoServiceClient):
-        threading.Thread.__init__(self, daemon=True)
+        threading.Thread.__init__(self)
         
         self.client = _client
 
     def run(self):
+        asyncio.set_event_loop(asyncio.new_event_loop())
         self.client.on_start()
 
 
