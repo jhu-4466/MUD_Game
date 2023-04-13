@@ -13,9 +13,9 @@
 
 from core.editor.apis.plugins import DockableLocationEnum
 
-from PyQt5.QtWidgets import QDockWidget, QMainWindow
+from PyQt5.QtWidgets import QDockWidget, QMainWindow, QApplication
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtGui import QCloseEvent, QKeyEvent
 
 
 class EditorMainWindow(QMainWindow):
@@ -34,9 +34,16 @@ class EditorMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.plugins = []
-        
+        self.init_plugins()
         self.init_ui()
+    
+    def init_plugins(self):
+        """_summary_
+        
+        init main window plugins and attributes.
+        
+        """
+        self.plugins = []
     
     def init_ui(self):
         """_summary_
@@ -66,8 +73,6 @@ class EditorMainWindow(QMainWindow):
         else:
             self.setCentralWidget(widget)
 
-        widget.show()
-
     def closeEvent(self, event: QCloseEvent):
         """_summary_
         
@@ -76,3 +81,13 @@ class EditorMainWindow(QMainWindow):
         """
         self.signal_close.emit()
         event.ignore()
+        
+    def keyPressEvent(self, event: QKeyEvent):
+        """_summary_
+        
+        rewrite key press event in the main window.
+        
+        """
+        if event.key() == Qt.Key.Key_C and \
+            QApplication.keyboardModifiers() == Qt.KeyboardModifier.ControlModifier:
+            self.signal_close.emit()

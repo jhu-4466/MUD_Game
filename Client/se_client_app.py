@@ -18,7 +18,7 @@ from core.editor.plugins.actor_attributes.plugins import ActorAttributes
 
 from PyQt5.QtWidgets import QApplication
 
-import sys
+import signal
 
 
 class SEClientApp:
@@ -56,9 +56,11 @@ class SEClientApp:
         Runs SE_Client_App.
 
         """
-        self.editor_app_main_window.show()
-        
         self.editor_app_communication_thread.start()
+        
+        self.editor_app_main_window.show()
+        for plugin in self.editor_app_main_window.plugins:
+            plugin.widget.show()
         
         self.editor_app.exec_()
     
@@ -71,15 +73,13 @@ class SEClientApp:
         self.editor_app_communication_client.on_close()
         
         self.editor_app_main_window.close()
-
-        sys.exit()
+        self.editor_app.quit()
 
 
 if __name__ == "__main__":
     url = "ws://127.0.0.1:8080/websocket"
     client = SEClientApp(url)
-    
-    try:
-        client.start()
-    except KeyboardInterrupt:
-        client.close()
+
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+    client.start()

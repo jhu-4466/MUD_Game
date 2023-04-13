@@ -34,7 +34,7 @@ class TornadoServiceClient:
     def __init__(self, url):
         self.url = url
         self.websocket = None
-        self.ioloop = tornado.ioloop.IOLoop.current()
+        self.ioloop = tornado.ioloop.IOLoop()
         self.is_connecting = False
         self.keep_alive_callback = None
 
@@ -44,8 +44,12 @@ class TornadoServiceClient:
         Connect to server, all internet communications belongs the same ioloop.
         
         """
-        self.ioloop.run_sync(self.on_connect)
-        self.ioloop.start()
+        self.ioloop.make_current()
+        try:
+            self.ioloop.run_sync(self.on_connect)
+        except asyncio.exceptions.TimeoutError:
+            # may closes too fast so that producing a timeout error is un
+            pass
 
     async def on_connect(self):
         """_summary_
@@ -75,7 +79,11 @@ class TornadoServiceClient:
             self.keep_alive_callback.stop()
             self.websocket.close()
         
-        self.ioloop.add_callback(self.ioloop.stop)
+        if self.ioloop:
+            self.ioloop.clear_current()
+            self.ioloop.stop()
+            self.ioloop = None
+        
         self.is_connecting = False
 
     def keep_alive(self):
@@ -130,12 +138,11 @@ class TornadoClientThread(threading.Thread):
         client: TornadoServiceClient
     """
     def __init__(self, _client: TornadoServiceClient):
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, daemon=True)
         
         self.client = _client
 
     def run(self):
-        asyncio.set_event_loop(asyncio.new_event_loop())
         self.client.on_start()
 
 

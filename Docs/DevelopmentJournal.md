@@ -59,4 +59,7 @@
 3. 进行策划草案，规划游戏系统构成；
 4. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api；
 ### 存在问题
-1. 目前server这边，关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+#### server
+1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+#### client
+1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序正常，后续可跟进。
