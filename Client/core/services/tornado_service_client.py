@@ -34,7 +34,7 @@ class TornadoServiceClient:
     def __init__(self, url, reconnect_interval: int=5):
         self.url = url
         self.websocket = None
-        self.ioloop = tornado.ioloop.IOLoop.current()
+        self.ioloop = None
         self.keep_alive_callback = None
         self.reconnect_interval = reconnect_interval
 
@@ -45,6 +45,7 @@ class TornadoServiceClient:
         
         """
         try:
+            self.ioloop = tornado.ioloop.IOLoop.current()
             self.ioloop.run_sync(self.on_connect)
             self.ioloop.start()
         except asyncio.exceptions.TimeoutError:
