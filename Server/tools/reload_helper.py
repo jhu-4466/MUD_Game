@@ -78,11 +78,21 @@ import logging
 import inspect
 
 
+def setup():
+    AutoReloader().setup()
+
+
+def refresh():
+    AutoReloader().refresh()
+
+
 class AutoReloader:
     """_summary_
+    
+    The auto reloader api.
 
     Returns:
-        _type_: _description_
+        _instance: one instance of the class.
     """    
     _instance = None
 
@@ -94,9 +104,20 @@ class AutoReloader:
         return cls._instance
 
     def setup(self):
+        """_summary_
+        
+        Set up the start reload time.
+        
+        """        
         self._boot_time = time.time()
 
     def refresh(self):
+        """_summary_
+        
+        Refresh the module for one time.
+        If you need to refresh for the whole time, you may implement the logic by yourself in the out layer.
+        
+        """ 
         reload_start_time = time.time()
         invalid_modules = self._get_invalid_module()
         for module in invalid_modules.values():
@@ -132,17 +153,6 @@ class AutoReloader:
         return True
 
 
-def setup():
-    AutoReloader().setup()
-
-
-def refresh():
-    AutoReloader().refresh()
-
-
-#=======================================================================================================================
-# xreload
-#=======================================================================================================================
 def xreload(mod):
     """Reload a module in place, updating classes, methods and functions.
     
@@ -158,10 +168,21 @@ def xreload(mod):
     # pydevd_dont_trace.clear_trace_filter_cache()
     return found_change
 
-#=======================================================================================================================
-# Reload
-#=======================================================================================================================
+
 class Reload:
+    """_summary_
+    
+    Reload class.
+
+    Returns:
+        module: a whole py file.
+        filename: file name.
+        source_mtime: the last modification time about the file.
+        classes: the class members in the file.
+        methods: the methods members in the file.
+        functions: the functions members in the file.
+        found_change: a boolean to determine whether the file has changed.
+    """  
     def __init__(self, module):
         self.module = module
         self.filename = module.__file__
@@ -190,6 +211,11 @@ class Reload:
         return functions
 
     def apply(self):
+        """_summary_
+        
+        check the new modication time and the origin time to determine whether refresh.
+        
+        """ 
         new_mtime = os.path.getmtime(self.filename)
         if new_mtime > self.source_mtime:
             logging.info("reloading module {}".format(self.module.__name__))

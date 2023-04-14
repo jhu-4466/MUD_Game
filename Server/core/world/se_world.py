@@ -31,6 +31,7 @@ class SEWorld(metaclass=SingletonType):
     def initialize(self):
         self.sessions = {}
         
+        reload_helper.setup()
     
     def on_start(self):
         self.tick()
