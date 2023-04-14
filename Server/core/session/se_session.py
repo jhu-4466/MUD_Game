@@ -19,7 +19,7 @@ class SESession():
     Attributes:
         connection: one client connection to server.
     """
-    next_session_id: int = 1
+    next_session_id: int = 0
     
     def __init__(self, connection):
         self.session_id = SESession.next_session_id

@@ -14,8 +14,6 @@
 from core.world.se_world import SEWorld
 from services.tornado_service_server import TornadoServiceServer, TornadoServerThread
 
-import sys
-
 
 class SEServerApp:
     """_summary_
@@ -33,7 +31,6 @@ class SEServerApp:
     
     def initialize(self):
         self.world = SEWorld()
-        
         self.tornado_server = TornadoServiceServer(self.world)
         self.tornado_server_thread = TornadoServerThread(self.tornado_server)
         

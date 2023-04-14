@@ -14,6 +14,7 @@
 from core.session.se_session import SESession
 
 from tools.singleton_type import SingletonType
+from tools import reload_helper
 
 
 class SEWorld(metaclass=SingletonType):
@@ -29,6 +30,7 @@ class SEWorld(metaclass=SingletonType):
     
     def initialize(self):
         self.sessions = {}
+        
     
     def on_start(self):
         self.tick()
@@ -39,7 +41,7 @@ class SEWorld(metaclass=SingletonType):
         Cycle through the world state, including db, sessions, and so on
         
         """
-        pass
+        reload_helper.refresh()
     
     def on_close(self):
         self.sessions = {}
