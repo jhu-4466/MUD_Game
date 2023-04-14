@@ -22,7 +22,7 @@ class BaseLogger:
     def __init__(self, name):
         self._name = name
         
-        filepath = './logs/'
+        filepath = '../logs/'
         self._filepath = filepath
         
         self.initialize()
