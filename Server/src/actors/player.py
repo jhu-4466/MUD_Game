@@ -1,8 +1,13 @@
 from enum import Enum
 from typing import List
 
+import sys
+sys.path.append("F:\CodeProjects\MUD_Game\Server\src")
+
 from core.actor.actor_factory import Actor
 # from components.bag import BagComponent
+
+from utils.proto.se_world_pb2 import ActorType, PlayerAttr
 
 
 class Player(Actor):
@@ -35,4 +40,4 @@ if __name__ == "__main__":
     from core.world.se_world import SEWorld
     from core.actor.actor_factory import ActorFactory
     player = ActorFactory.create_actor(ActorType.PLAYER, SEWorld())
-    print(player)
+    print(player.actor_attr_type)

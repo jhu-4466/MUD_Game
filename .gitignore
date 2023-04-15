@@ -8,3 +8,6 @@ Docs/*.odt
 
 # logs
 *.log
+
+# pb2
+*_pb2.py

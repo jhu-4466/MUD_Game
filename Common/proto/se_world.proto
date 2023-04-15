@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+enum ActorType {
+    ACTOR = 0;
+    PLAYER = 1;
+    NPC = 2;
+    WARRIOR = 3;
+}
+
+message ActorAttr {
+    string name = 1;
+    int32 level = 2;
+    int32 max_hp = 3;
+    int32 max_mp = 4;
+    int32 cur_hp = 5;
+    int32 cur_mp = 6;
+    int32 physical_damage_point = 7;
+    int32 magical_damage_point = 8;
+    int32 physical_defence = 9;
+    int32 magical_defence = 10;
+}
+
+message PlayerAttr {
+    repeated string equipments = 1;
+    repeated string skills = 2;
+}
+
+message WarriorAttr {
+    repeated string skills = 1;
+}

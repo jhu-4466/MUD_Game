@@ -13,8 +13,8 @@
 
 from core.session.se_session import SESession
 
-from tools.singleton_type import SingletonType
-from tools import reload_helper
+from utils.singleton_type import SingletonType
+from utils import reload_helper
 
 
 class SEWorld(metaclass=SingletonType):

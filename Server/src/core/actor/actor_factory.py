@@ -13,6 +13,7 @@
 
 
 from core.world.se_world import SEWorld
+from utils.proto.se_world_pb2 import ActorType, ActorAttr
 
 import logging
 import weakref
@@ -116,17 +117,14 @@ class Actor(metaclass=ActorMeta):
                 return
         object.__setattr__(self, name, value)
 
-    def __repr__(self):
-        return "%s(%s)(%d->%d): pos(%s), dir(%s)\t| %s" % (
-            self.name,
-            ActorType.Name(self.actor_type),
-            self.id,
-            self.owner_id,
-            self.transform.position,
-            self.transform.direction,
-            MessageToDict(self.actor_attr, including_default_value_fields=False,
-                          preserving_proto_field_name=True)
-        )
+    # def __repr__(self):
+    #     return "%s(%s)(%d->%d): pos(%s), dir(%s)\t| %s" % (
+    #         self.name,
+    #         ActorType.Name(self.actor_type),
+    #         self.id,
+    #         MessageToDict(self.actor_attr, including_default_value_fields=False,
+    #                       preserving_proto_field_name=True)
+    #     )
 
 
 class ActorFactory(object):
