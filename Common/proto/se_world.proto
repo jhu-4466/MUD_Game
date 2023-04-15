@@ -1,30 +1,105 @@
 syntax = "proto3";
 
 enum ActorType {
+    // 角色种类
     ACTOR = 0;
     PLAYER = 1;
-    NPC = 2;
-    WARRIOR = 3;
+    NPC = 2;  // 友好的NPC
+    MONSTER = 3;  // 怪物（战斗对象）
+}
+
+enum ItemType{
+    // 物品种类
+    EQUIPMENT = 0;
+    CONSUMABLE = 1;  // 消耗品
+    MATERIAL = 2;  // 材料
 }
 
 message ActorAttr {
-    string name = 1;
+    string actor_id = 1;
+    string actor_name = 2;
+    ActorType actor_type = 3;
+}
+
+message PlayerAttr {
+    ActorAttr basic_attr = 1;
     int32 level = 2;
     int32 max_hp = 3;
     int32 max_mp = 4;
     int32 cur_hp = 5;
     int32 cur_mp = 6;
-    int32 physical_damage_point = 7;
-    int32 magical_damage_point = 8;
+    int32 physical_damage = 7;
+    int32 magical_damage = 8;
+    int32 physical_defence = 9;
+    int32 magical_defence = 10;
+    int32 exp = 13;
+    int32 gold = 14;
+}
+
+message NPCAttr {
+    ActorAttr basic_attr = 1;
+    repeated string dialogues = 2;
+    int32 accept_quest_id = 4;
+    int32 complete_quest_id = 5;
+}
+
+message MonsterAttr {
+    ActorAttr basic_attr = 1;
+    int32 level = 2;
+    int32 max_hp = 3;
+    int32 max_mp = 4;
+    int32 cur_hp = 5;
+    int32 cur_mp = 6;
+    int32 physical_damage = 7;
+    int32 magical_damage = 8;
     int32 physical_defence = 9;
     int32 magical_defence = 10;
 }
 
-message PlayerAttr {
-    repeated string equipments = 1;
-    repeated string skills = 2;
+message Combat {
+    // 战斗操作
+    string attacker_id = 1;
+    string target_id = 2;
+    string operation = 3;  // 具体操作：如技能、普通攻击
+    int32 damage = 4;  // 实际造成伤害
+    bool dodge = 6;  // 是否闪避
+    bool is_dead = 7;  // 是否死亡
 }
 
-message WarriorAttr {
-    repeated string skills = 1;
+// message Achievement {
+//     // 成就，1.0版本暂不考虑
+//     int32 achievement_id = 1;
+//     string description = 2;
+//     bool completed = 3;
+// }
+
+message MarketItem {
+    // 交易市场单项
+    int32 item_id = 1;
+    int32 price = 2;
+    string seller_id = 3;
+}
+
+message Synthesis {
+    // 制作装备、合成消耗品
+    int32 synthesis_id = 1;
+    string name = 2;
+    string description = 3;
+    repeated SynthesisMaterial synthesis_materials = 4;
+    string result = 5;
+}
+
+message SynthesisMaterial {
+    // 合成材料
+    Item item = 1;
+    int32 amount = 2;
+}
+
+message Item {
+    // 物品单项
+    int32 item_id = 1;
+    ItemType item_type = 2;
+    string name = 3;
+    string description = 4;
+    int32 price = 5;  // 对系统售价
 }

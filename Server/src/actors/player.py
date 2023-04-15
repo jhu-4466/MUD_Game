@@ -1,8 +1,15 @@
-from enum import Enum
-from typing import List
+# -*- coding: utf-8 -*- #
 
-import sys
-sys.path.append("F:\CodeProjects\MUD_Game\Server\src")
+# -----------------------------
+# Topic: actor player
+# Author: m14
+# Created: 2023.04.14
+# Description: create actor regularly
+# History:
+#       <autohr>       <version>      <time>        <desc>
+#         m14           v0.5        2023/04/15      basic build simply
+# -----------------------------
+
 
 from core.actor.actor_factory import Actor
 # from components.bag import BagComponent
@@ -31,7 +38,7 @@ class Player(Actor):
         # self.bag.remove_item(item_id, count)
         pass
 
-    def get_items(self) -> List[int]:
+    def get_items(self):
         # return self.bag.get_items()
         pass
 

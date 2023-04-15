@@ -8,7 +8,7 @@
 # History:
 #       <autohr>       <version>      <time>        <desc>
 #    yangchaohuan       v0.1        2023/04/14      basic build without protobuf
-#         m14           v0.5        2023/04
+#         m14           v0.5        2023/04/15      basic build
 # -----------------------------
 
 
@@ -36,7 +36,6 @@ class Actor(metaclass=ActorMeta):
 
     def __init__(self, world):
         self.id: int = 0
-        self.owner_id: int = 0
         self.name: str = ""
         self.____world__: "SEWorld" = world
         self.____components_map__ = {}
@@ -47,7 +46,6 @@ class Actor(metaclass=ActorMeta):
         self.on_initialize()
 
     def on_initialize(self):
-        # add 
         pass
 
     @property
@@ -117,14 +115,14 @@ class Actor(metaclass=ActorMeta):
                 return
         object.__setattr__(self, name, value)
 
-    # def __repr__(self):
-    #     return "%s(%s)(%d->%d): pos(%s), dir(%s)\t| %s" % (
-    #         self.name,
-    #         ActorType.Name(self.actor_type),
-    #         self.id,
-    #         MessageToDict(self.actor_attr, including_default_value_fields=False,
-    #                       preserving_proto_field_name=True)
-    #     )
+    def __repr__(self):
+        return "%s(%s)(%d):\t| %s" % (
+            self.name,
+            ActorType.Name(self.actor_type),
+            self.id,
+            MessageToDict(self.actor_attr, including_default_value_fields=False,
+                          preserving_proto_field_name=True)
+        )
 
 
 class ActorFactory(object):
