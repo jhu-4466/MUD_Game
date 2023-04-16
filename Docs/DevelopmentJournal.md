@@ -103,3 +103,21 @@
 1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
 #### client
 1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序关闭，后续可跟进。
+
+## 2023.04.16
+### 已完成事务：
+1. 重构utils文件夹，使其更工程化；
+2. 完成bag component构造、database helper构造；
+### 目标事务
+1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；
+2. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api；
+### 存在问题
+#### server
+1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+#### client
+1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序关闭，后续可跟进。
+#### database
+1. 数据库的更新一般选择在游戏世界tick的时候；但当有需要数据库操作时，应该利用database helper更新database order commit，在每周期后统一更新数据库。这是后续开发方向，由于暂未配置数据库，先用统一注释备注
+```python
+# use database helper to commit the update
+```

@@ -30,15 +30,29 @@ class ActorMeta(type):
 
 
 class Actor(metaclass=ActorMeta):
+    """_summary_
+
+    the base actor.
+
+    Attributes:
+        metaclass (_type_, optional): _description_. Defaults to ActorMeta.
+        actor_type: Actor Type in proto.
+        actor_attr_type: Actor Attr in proto.
+        activate_flag: the actor active state.
+        id(str): unique actor id in database.
+        name: actor name in database.
+        ____world____: belongs to the world, if actor is disconnected, actor will be destoried after updating data in database.
+        ____components_map____: all components belongs to the actor.
+    """    
     actor_type = ActorType.ACTOR
     actor_attr_type = ActorAttr
     activate_flag: bool = False
 
     def __init__(self, world):
-        self.id: int = 0
+        self.id: str = 0
         self.name: str = ""
-        self.____world__: "SEWorld" = world
-        self.____components_map__ = {}
+        self.____world____: "SEWorld" = world
+        self.____components_map____ = {}
         self.initialize()
 
     def initialize(self):
@@ -50,11 +64,11 @@ class Actor(metaclass=ActorMeta):
 
     @property
     def world(self):
-        return self.____world__
+        return self.____world____
 
     @world.setter
     def world(self, value):
-        self.____world__ = value
+        self.____world____ = value
 
     def activate(self):
         if self.activate_flag:
@@ -78,40 +92,47 @@ class Actor(metaclass=ActorMeta):
         pass
 
     def tick(self, delta_time):
+        """_summary_
+
+        update actor state and all components.
+        
+        Args:
+            delta_time (int): an update circle.
+        """    
         pass
 
     def get_component(self, comp_name):
-        return self.____components_map__.get(comp_name)
+        return self.____components_map____.get(comp_name)
 
     def add_component(self, comp_name, comp_inst, auto_activate=True):
-        if comp_name in self.____components_map__:
+        if comp_name in self.____components_map____:
             logging.error(f"Component {comp_name} already exists!")
             return
         comp_inst.owner = self
-        self.____components_map__[comp_name] = comp_inst
+        self.____components_map____[comp_name] = comp_inst
         if auto_activate:
             comp_inst.activate()
 
     def remove_component(self, comp_name):
-        if comp_name not in self.____components_map__:
+        if comp_name not in self.____components_map____:
             logging.info(f"Component {comp_name} not exists, ignore!")
             return
-        comp_inst = self.____components_map__[comp_name]
+        comp_inst = self.____components_map____[comp_name]
         comp_inst.deactivate()
         comp_inst.owner = None
-        del self.____components_map__[comp_name]
+        del self.____components_map____[comp_name]
 
     def __getattr__(self, name):
-        if name != "____components_map__":
-            if hasattr(self, "____components_map__") and name in self.____components_map__:
-                return self.____components_map__[name]
+        if name != "____components_map____":
+            if hasattr(self, "____components_map____") and name in self.____components_map____:
+                return self.____components_map____[name]
         raise AttributeError(
             f"{self.__class__.__name__} object has no attribute {name}")
 
     def __setattr__(self, name, value):
-        if name != "____components_map__":
-            if hasattr(self, "____components_map__") and name in self.____components_map__:
-                self.____components_map__[name].load_proto(value)
+        if name != "____components_map____":
+            if hasattr(self, "____components_map____") and name in self.____components_map____:
+                self.____components_map____[name].load_proto(value)
                 return
         object.__setattr__(self, name, value)
 

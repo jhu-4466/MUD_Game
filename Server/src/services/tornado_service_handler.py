@@ -12,7 +12,7 @@
 # -----------------------------
 
 
-from utils.base_logger import tornado_logger
+from utils.helpers.logger_helper import LoggerHelper
 
 import tornado.websocket
 
@@ -28,6 +28,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
     """
     def __init__(self, application, request, **kwargs):
         self.world = kwargs.pop('world')
+        self.tornado_logger = LoggerHelper('tornado')
         
         super().__init__(application, request, **kwargs)
     
@@ -84,7 +85,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection running.
         
         """
-        tornado_logger.logger.info("someone connects now.")
+        self.tornado_logger.info("someone connects now.")
         self.world.add_session(self)
         
     def on_close(self):
@@ -93,7 +94,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket connection closing.
         
         """
-        tornado_logger.logger.info("someone quits now.")
+        self.tornado_logger.info("someone quits now.")
         self.world.remove_session(self)
         
     def on_message(self, message):
@@ -102,6 +103,6 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         Handles the WebSocket message.
         
         """
-        tornado_logger.logger.info(message)
+        self.tornado_logger.info(message)
         self.world.broadcast()
 

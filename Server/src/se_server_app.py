@@ -24,7 +24,6 @@ class SEServerApp:
         world: game world state
         tornado_server: tornado server app
         tornado_server_thread: tornado server thread
-        tornado_logger: tornado logger
     """
     def __init__(self):
         self.initialize()

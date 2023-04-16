@@ -14,7 +14,7 @@
 from core.session.se_session import SESession
 
 from utils.singleton_type import SingletonType
-from utils import reload_helper
+from utils.helpers import reload_helper
 
 
 class SEWorld(metaclass=SingletonType):

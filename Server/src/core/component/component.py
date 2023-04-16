@@ -11,6 +11,9 @@
 # -----------------------------
 
 
+from core.world.se_world import SEWorld
+
+
 class ComponentMeta(type):
     types_dict = {}
 
@@ -21,11 +24,29 @@ class ComponentMeta(type):
 
 
 class Component(metaclass=ComponentMeta):
+    """_summary_
+
+    the base component.
+    
+    Args:
+        component_name(int): component name.
+        activate_flag(bool): component active state.
+        owner_id(str): belongs to one actor.
+    """
     component_name: str = "BaseComponent"
     activate_flag: bool = False
 
-    def __init__(self, owner_id):
-        self.owner_id: int = owner_id
+    def __init__(self, owner_id, world):
+        self.owner_id: str = owner_id
+        self.____world____: "SEWorld" = world
+
+    @property
+    def world(self):
+        return self.____world____
+
+    @world.setter
+    def world(self, value):
+        self.____world____ = value
 
     def activate(self):
         if self.activate_flag:
@@ -58,7 +79,7 @@ class Component(metaclass=ComponentMeta):
         """        
         pass
     
-    def load_proto(self):
+    def load_proto(self, value):
         pass
 
 
