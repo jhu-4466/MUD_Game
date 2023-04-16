@@ -121,3 +121,4 @@
 ```python
 # use database helper to commit the update
 ```
+2. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；

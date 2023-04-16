@@ -51,8 +51,18 @@ class Player(Actor):
         self.bag = BagComponent(self.actor_attr.basic_attr.actor_id, self.world)
         self.add_component("bag", self.bag)
 
-    def tick(self):
-        pass
+    def tick(self, delta_time):
+        """_summary_
+
+        tick self state and all components.
+
+        Args:
+            delta_time (_type_): _description_
+        """
+        # self attr
+        
+        for component in self.____components_map____.values():
+            component.tick(delta_time)
 
     def add_item(self, item_id: int, count: int):
         self.bag.add_item(item_id, count)
@@ -69,3 +79,9 @@ if __name__ == "__main__":
     from core.actor.actor import ActorFactory
     player = ActorFactory.create_actor(ActorType.PLAYER, SEWorld())
     player.add_item(1, 1)
+    
+    try:
+        while True:
+            player.tick(0.5)
+    except KeyboardInterrupt:
+        sys.exit()
