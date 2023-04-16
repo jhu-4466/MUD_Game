@@ -48,7 +48,7 @@ class Player(Actor):
         # test attr
         self.actor_attr = player_attr
         
-        self.bag = BagComponent(self.actor_attr.basic_attr.actor_id, self.world)
+        self.bag = BagComponent(self)
         self.add_component("bag", self.bag)
 
     def tick(self, delta_time):
@@ -78,10 +78,11 @@ if __name__ == "__main__":
     from core.world.se_world import SEWorld
     from core.actor.actor import ActorFactory
     player = ActorFactory.create_actor(ActorType.PLAYER, SEWorld())
-    player.add_item(1, 1)
+    player.add_item("M0001", 2)
+    print(player.bag.items)
     
-    try:
-        while True:
-            player.tick(0.5)
-    except KeyboardInterrupt:
-        sys.exit()
+    # try:
+    #     while True:
+    #         player.tick(0.5)
+    # except KeyboardInterrupt:
+    #     sys.exit()

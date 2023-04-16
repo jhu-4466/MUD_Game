@@ -14,16 +14,7 @@
 from core.world.se_world import SEWorld
 
 
-class ComponentMeta(type):
-    types_dict = {}
-
-    def __new__(mcs, clsname, bases, attrs):
-        c = super().__new__(mcs, clsname, bases, attrs)
-        mcs.types_dict[c.component_name] = c
-        return c
-
-
-class Component(metaclass=ComponentMeta):
+class Component:
     """_summary_
 
     the base component.
@@ -31,14 +22,13 @@ class Component(metaclass=ComponentMeta):
     Args:
         component_name(int): component name.
         activate_flag(bool): component active state.
-        owner_id(str): belongs to one actor.
+        owner(str): belongs to one actor.
     """
     component_name: str = "BaseComponent"
     activate_flag: bool = False
 
-    def __init__(self, owner_id, world):
-        self.owner_id: str = owner_id
-        self.____world____: "SEWorld" = world
+    def __init__(self, owner):
+        self.owner = owner
 
     @property
     def world(self):
@@ -81,12 +71,3 @@ class Component(metaclass=ComponentMeta):
     
     def load_proto(self, value):
         pass
-
-
-class ComponentFactory:
-    @classmethod
-    def create_component(cls, component_name: str):
-        component_cls = ComponentMeta.types_dict.get(component_name)
-        if component_cls is None:
-            return None
-        return component_cls()
