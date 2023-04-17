@@ -26,6 +26,8 @@ class BagComponent(Component):
         owner_attr: actor attr.
         items: all items in a actor package.
     """
+    component_name = "Bag"
+    
     def __init__(self, owner):
         super().__init__(owner)
         

@@ -27,7 +27,7 @@ class Player(Actor):
 
     the base actor.
 
-    Attributes:
+    Args:
         metaclass (_type_, optional): _description_. Defaults to ActorMeta.
         actor_type: Actor Type in proto.
         actor_attr: Actor Attr in proto.

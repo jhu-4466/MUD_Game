@@ -23,7 +23,7 @@ class EditorMainWindow(QMainWindow):
     
     Editor main window.
     
-    Attributes:
+    Args:
         plugins: all plugin widgets.
     
     Signal:

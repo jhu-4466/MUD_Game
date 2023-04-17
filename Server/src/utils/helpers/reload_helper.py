@@ -156,7 +156,7 @@ class AutoReloader:
 def xreload(mod):
     """Reload a module in place, updating classes, methods and functions.
     
-    Attributes:
+    Args:
         mod: a module object
     Returns:
         a boolean indicating whether a change was done.

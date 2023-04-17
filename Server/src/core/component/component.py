@@ -24,7 +24,7 @@ class Component:
         activate_flag(bool): component active state.
         owner(str): belongs to one actor.
     """
-    component_name: str = "BaseComponent"
+    component_name: str = "Component"
     activate_flag: bool = False
 
     def __init__(self, owner):

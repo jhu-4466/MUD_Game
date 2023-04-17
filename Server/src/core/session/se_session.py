@@ -16,7 +16,7 @@ class SESession():
     
     it holds the session from one client.
     
-    Attributes:
+    Args:
         connection: one client connection to server.
     """
     next_session_id: int = 0

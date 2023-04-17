@@ -22,7 +22,7 @@ class SEWorld(metaclass=SingletonType):
     
     Holds the world state
     
-    Attributes:
+    Args:
         sessions: tornado connection
     """
     def __init__(self):
@@ -52,7 +52,7 @@ class SEWorld(metaclass=SingletonType):
         
         Add the session into the game server.
 
-        Attributes:
+        Args:
             connection: tornado websocket client connection
         """
         new_session = SESession(connection)
@@ -63,7 +63,7 @@ class SEWorld(metaclass=SingletonType):
         
         Remove the session into the game server.
         
-        Attributes:
+        Args:
             connection: tornado websocket client connection
         """
         for id, session in self.sessions.items():
@@ -76,7 +76,7 @@ class SEWorld(metaclass=SingletonType):
         
         a connect test.
         
-        Attributes:
+        Args:
             message: send message to session.
         """
         for session in self.sessions.values():

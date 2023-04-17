@@ -56,6 +56,34 @@ message MonsterAttr {
     int32 magical_defence = 10;
 }
 
+enum SkillType {
+    // 技能派系
+    WITCH = 0;  // 巫
+    CONFUCIANISM = 1;  // 儒
+    TAOISM = 2;  // 道
+    BRUTE = 3;  // 力
+}
+
+enum DamageType {
+    // 伤害类型
+    PHYSICAL = 0;
+    MAGICAL = 1;
+    BUFF = 2;
+    DEBUFF = 3;
+}
+
+message SkillAttr {
+    // 技能节点
+    string skill_id = 1;
+    string skill_name = 2;
+    int32 max_skill_level = 3;
+    SkillType skill_type = 4;
+    string skill_desc = 5;  // description
+    SkillType damage_type = 6;  // damage type, such as physical and magical
+    string damage = 7;  // damage value
+    int32 duration = 8;  // skill state duration
+}
+
 message Combat {
     // 战斗操作
     string attacker_id = 1;
@@ -107,4 +135,5 @@ message Item {
     float hardness = 6;  // 硬度：金属材料在受力时抵抗弹性变形的能力。
     float strength = 7;  // 强度：金属材料在外力作用下抵抗塑性变形和断裂的能力。
     float stiffness = 8;  // 刚度：金属材料抵抗更硬的物体压入其内的能力。
+    string datetime = 9;
 }

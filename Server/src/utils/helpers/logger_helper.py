@@ -20,7 +20,7 @@ class LoggerHelper:
     
     logger helper.
     
-    Attributes:
+    Args:
         ____name____: logger name
         ____logger____: one logger five logs.
         ____filepath____: log file path.

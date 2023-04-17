@@ -24,7 +24,7 @@ class TornadoServiceClient:
     
     The client end connecting to the server.
     
-    Attributes:
+    Args:
         url: the address of the server.
         websocket: due to the recommendation from the document that use websocket_connect() to build the client end.
         ioloop: one tornado client one I/O loop.
@@ -140,7 +140,7 @@ class TornadoClientThread(threading.Thread):
     
     To avoid the stoppage between pyqt and tornado.
     
-    Attributes:
+    Args:
         client: TornadoServiceClient
     """
     def __init__(self, _client: TornadoServiceClient):

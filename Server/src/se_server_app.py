@@ -20,7 +20,7 @@ class SEServerApp:
     
     it controls the tornado server end.
     
-    Attributes:
+    Args:
         world: game world state
         tornado_server: tornado server app
         tornado_server_thread: tornado server thread

@@ -27,7 +27,7 @@ class TornadoServiceServer:
     
     it controls the tornado server end.
     
-    Attributes:
+    Args:
         game_server: it includes the core logics of the games
         ____app____: it is a real example about web app
     """
@@ -73,7 +73,7 @@ class TornadoServerThread(threading.Thread):
     
     To avoid the stoppage between tick and tornado.
     
-    Attributes:
+    Args:
         ____server____: Tornado Service Server
         daemon: True means it will close when the main thread close.
     """

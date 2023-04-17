@@ -26,7 +26,7 @@ class SEClientApp:
     
     As a client, combining pyqt and tornado.
     
-    Attributes:
+    Args:
         editor_app_communication_client: tornado client
         editor_app_communication_thread: tornado thread
         editor_app: editor app, it must run in the main thread

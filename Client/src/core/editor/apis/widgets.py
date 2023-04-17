@@ -19,7 +19,7 @@ class PluginMainWidget(QWidget):
     
     base widget.
     
-    Attributes:
+    Args:
         parent: parent widget
         WIDGET_CLASS: plugin widget
         DOCK_LOCATION: plugin index in the main window
