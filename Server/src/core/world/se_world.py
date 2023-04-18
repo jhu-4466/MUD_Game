@@ -41,7 +41,6 @@ class SEWorld(metaclass=SingletonType):
         reload_helper.setup()
         
         self.skill_helper = SkillHelper(self.skill_file)
-        print(self.skill_helper.standard_skills)
     
     def on_start(self):
         self.tick()
