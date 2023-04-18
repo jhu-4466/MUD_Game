@@ -30,14 +30,6 @@ class Component:
     def __init__(self, owner):
         self.owner = owner
 
-    @property
-    def world(self):
-        return self.____world____
-
-    @world.setter
-    def world(self, value):
-        self.____world____ = value
-
     def activate(self):
         if self.activate_flag:
             return

@@ -77,11 +77,13 @@ message SkillAttr {
     string skill_id = 1;
     string skill_name = 2;
     int32 max_skill_level = 3;
-    SkillType skill_type = 4;
-    string skill_desc = 5;  // description
-    SkillType damage_type = 6;  // damage type, such as physical and magical
-    string damage = 7;  // damage value
-    int32 duration = 8;  // skill state duration
+    int32 cur_skill_level = 4;
+    SkillType skill_type = 5;
+    string skill_desc = 6;  // description
+    SkillType damage_type = 7;  // damage type, such as physical and magical
+    string damage = 8;  // damage value
+    int32 duration = 9;  // skill state duration
+    repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
 }
 
 message Combat {

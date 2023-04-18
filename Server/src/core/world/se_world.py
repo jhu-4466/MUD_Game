@@ -15,6 +15,7 @@ from core.session.se_session import SESession
 
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
+from utils.helpers.skill_helper import SkillHelper
 
 
 class SEWorld(metaclass=SingletonType):
@@ -25,13 +26,21 @@ class SEWorld(metaclass=SingletonType):
     Args:
         sessions: tornado connection
     """
-    def __init__(self):
+    def __init__(self, skill_file_path):
+        self.skill_file_path = skill_file_path
+        
         self.initialize()
     
     def initialize(self):
         self.sessions = {}
+        self.skilltree_helper = None
         
+        self.on_initialize()
+    
+    def on_initialize(self):
         reload_helper.setup()
+        
+        self.skill_helper = SkillHelper(self.skill_file_path)
     
     def on_start(self):
         self.tick()
