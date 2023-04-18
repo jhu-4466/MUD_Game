@@ -7,18 +7,25 @@
 # Description: skill tree helper
 # History:
 #    <autohr>    <version>    <time>        <desc>
-#    m14         v0.5         2023/04/    basic build
+#    m14         v0.5         2023/04/18    basic build
 # -----------------------------
-import sys, os
 
-from utils.singleton_type import SingletonType
+
 from utils.proto.se_world_pb2 import SkillAttr
 
 import json
 from google.protobuf.json_format import ParseDict
 
 
-class SkillHelper(metaclass=SingletonType):
+class SkillHelper:
+    """
+    
+    maintains the standard skills.
+    
+    Args:
+        file_path: skill data file.
+        ____standard_skills____: standard all skills.
+    """
     def __init__(self, file_path: str):
         self.file_path = file_path
         
@@ -37,6 +44,11 @@ class SkillHelper(metaclass=SingletonType):
         return self.____standard_skills____
     
     def load_json(self):
+        """
+        
+        load skill data from json.
+        
+        """
         skills_json = open(self.file_path, 'r', encoding="utf-8")
         skills_data = json.load(skills_json)
         
@@ -44,10 +56,17 @@ class SkillHelper(metaclass=SingletonType):
             for skill in skill_tree:
                 skill_attr = ParseDict(skill, SkillAttr())
                 self.____standard_skills____[skill_attr.skill_id] = skill_attr
+        
+        skills_json.close()
     
     def find_a_skill(self, skill_id):
+        """
+
+        by skill id, finds the skill attr in stanard skill
+
+        Args:
+            skill_id (str): the id of a target skill.
+        Returns:
+            SkillAttr: skill proto message 
+        """
         return self.____standard_skills____[skill_id]
-
-
-if __name__ == "__main__":
-    s = SkillHelper("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")

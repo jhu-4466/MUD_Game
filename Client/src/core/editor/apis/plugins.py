@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import QDockWidget, QWidget
 
 
 class PluginBase(QObject):
-    """_summary_
+    """
     
     base plugin.
     
@@ -57,7 +57,7 @@ class DockableLocationEnum:
 
 
 class DockablePluginBase(PluginBase):
-    """_summary_
+    """
     
     base plugin.
     

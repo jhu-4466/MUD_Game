@@ -17,7 +17,7 @@ from tests.test_items_list import items
 
 
 class BagComponent(Component):
-    """_summary_
+    """
 
     the base component.
     
@@ -37,7 +37,7 @@ class BagComponent(Component):
         pass
     
     def add_item(self, item_id: str, item_amount: int):
-        """_summary_
+        """
 
         Put item into the bage
 
@@ -53,7 +53,7 @@ class BagComponent(Component):
         # use database helper to commit the update
     
     def remove_item(self, item_id: str, item_amount: int):
-        """_summary_
+        """
 
         Throw item from the bage
 
@@ -71,7 +71,7 @@ class BagComponent(Component):
         # use database helper to commit the update
 
     def sell_item(self, item_id: str, item_amount: int):
-        """_summary_
+        """
 
         sell item to the server
 

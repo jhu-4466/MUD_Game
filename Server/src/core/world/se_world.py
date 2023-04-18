@@ -19,15 +19,15 @@ from utils.helpers.skill_helper import SkillHelper
 
 
 class SEWorld(metaclass=SingletonType):
-    """_summary_
+    """
     
     Holds the world state
     
     Args:
         sessions: tornado connection
     """
-    def __init__(self, skill_file_path):
-        self.skill_file_path = skill_file_path
+    def __init__(self, skill_file):
+        self.skill_file = skill_file
         
         self.initialize()
     
@@ -40,13 +40,14 @@ class SEWorld(metaclass=SingletonType):
     def on_initialize(self):
         reload_helper.setup()
         
-        self.skill_helper = SkillHelper(self.skill_file_path)
+        self.skill_helper = SkillHelper(self.skill_file)
+        print(self.skill_helper.standard_skills)
     
     def on_start(self):
         self.tick()
     
     def tick(self):
-        """_summary_
+        """
         
         Cycle through the world state, including db, sessions, and so on
         
@@ -57,7 +58,7 @@ class SEWorld(metaclass=SingletonType):
         self.sessions = {}
 
     def add_session(self, connection):
-        """_summary_
+        """
         
         Add the session into the game server.
 
@@ -68,7 +69,7 @@ class SEWorld(metaclass=SingletonType):
         self.sessions[new_session.session_id] = new_session
     
     def remove_session(self, connection):
-        """_summary_
+        """
         
         Remove the session into the game server.
         
@@ -81,7 +82,7 @@ class SEWorld(metaclass=SingletonType):
                 break
     
     def broadcast(self, message="Hello! My consumer."):
-        """_summary_
+        """
         
         a connect test.
         

@@ -16,7 +16,7 @@ import logging
 
 
 class LoggerHelper:
-    """_summary_
+    """
     
     logger helper.
     

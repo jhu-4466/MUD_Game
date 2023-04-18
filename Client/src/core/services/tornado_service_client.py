@@ -20,7 +20,7 @@ import threading
 
 
 class TornadoServiceClient:
-    """_summary_
+    """
     
     The client end connecting to the server.
     
@@ -39,7 +39,7 @@ class TornadoServiceClient:
         self.reconnect_interval = reconnect_interval
 
     def on_start(self):
-        """_summary_
+        """
         
         Connect to server, all internet communications belongs the same ioloop.
         
@@ -53,7 +53,7 @@ class TornadoServiceClient:
             pass
 
     async def on_connect(self):
-        """_summary_
+        """
         
         The core logic of connecting.
         
@@ -71,7 +71,7 @@ class TornadoServiceClient:
             self.ioloop.add_timeout(self.ioloop.time() + self.reconnect_interval, self.on_reconnect)
     
     def on_reconnect(self):
-        """_summary_
+        """
         
         The core logic of reconnecting.
         
@@ -80,7 +80,7 @@ class TornadoServiceClient:
         self.ioloop.spawn_callback(self.on_connect)
         
     def on_close(self):
-        """_summary_
+        """
         
         Close connection.
         
@@ -92,7 +92,7 @@ class TornadoServiceClient:
         self.ioloop.add_callback(self.ioloop.stop)
 
     def keep_alive(self):
-        """_summary_
+        """
         
         Keep the connection alive.
         
@@ -100,7 +100,7 @@ class TornadoServiceClient:
         self.send('ping')
 
     def send(self, message):
-        """_summary_
+        """
         
         Send message to the server.
         
@@ -109,7 +109,7 @@ class TornadoServiceClient:
             self.websocket.write_message(message)
 
     async def listen(self):
-        """_summary_
+        """
         
         Listen message from the server during the whole process.
         
@@ -126,7 +126,7 @@ class TornadoServiceClient:
             await asyncio.sleep(0)
 
     async def handle_message(self, message):
-        """_summary_
+        """
         
         Handle message from the server.
         
@@ -136,7 +136,7 @@ class TornadoServiceClient:
 
 
 class TornadoClientThread(threading.Thread):
-    """_summary_
+    """
     
     To avoid the stoppage between pyqt and tornado.
     

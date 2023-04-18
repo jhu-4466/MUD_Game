@@ -14,9 +14,11 @@
 from core.world.se_world import SEWorld
 from services.tornado_service_server import TornadoServiceServer, TornadoServerThread
 
+import argparse
+
 
 class SEServerApp:
-    """_summary_
+    """
     
     it controls the tornado server end.
     
@@ -25,11 +27,13 @@ class SEServerApp:
         tornado_server: tornado server app
         tornado_server_thread: tornado server thread
     """
-    def __init__(self):
+    def __init__(self, skill_file):
+        self.skill_file = skill_file
+        
         self.initialize()
     
     def initialize(self):
-        self.world = SEWorld()
+        self.world = SEWorld(self.skill_file)
         self.tornado_server = TornadoServiceServer(self.world)
         self.tornado_server_thread = TornadoServerThread(self.tornado_server)
         
@@ -41,7 +45,7 @@ class SEServerApp:
         self.tick()
     
     def tick(self):
-        """_summary_
+        """
         
         Cycle through the server state
         
@@ -56,7 +60,12 @@ class SEServerApp:
         self.world.on_close()
 
 if __name__ == '__main__':
-    server_app = SEServerApp()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-sf", "--skill_file", type=str,
+                        required=True, help="standard skill file")
+    
+    args = parser.parse_args()
+    server_app = SEServerApp(args.skill_file)
     try:
         server_app.start()
     except KeyboardInterrupt:

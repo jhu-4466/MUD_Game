@@ -7,7 +7,7 @@
 # Description: a bag component
 # History:
 #       <autohr>       <version>      <time>        <desc>
-#         m14           v0.5        2023/04/17      basic build
+#         m14           v0.5        2023/04/18      basic build
 # -----------------------------
 
 
@@ -15,7 +15,7 @@ from core.component.component import Component
 
 
 class Skill(Component):
-    """_summary_
+    """
 
     A skill component for the player.
 
@@ -31,7 +31,9 @@ class Skill(Component):
         self.current_skills = set()
 
     def learn_skill(self, target_id: str):
-        """Learn a new skill.
+        """
+
+        Learn a new skill.
 
         Args:
             target_id (str): The ID of the skill to learn.
@@ -61,7 +63,9 @@ class Skill(Component):
         return True
 
     def remove_skill(self, target_id):
-        """Remove a skill and its child skills from the skill tree.
+        """
+
+        Remove a skill and its child skills from the skill tree.
 
         Args:
             skill_name (str): The name of the skill to remove.

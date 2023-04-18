@@ -21,7 +21,7 @@ import hashlib
 
 
 class TornadoMainHandler(tornado.websocket.WebSocketHandler):
-    """_summary_
+    """
     
     Handles the WebSocket connection.
     
@@ -33,7 +33,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         super().__init__(application, request, **kwargs)
     
     def check_origin(self, origin):
-        """_summary_
+        """
         
         Override the default method to allow connections from any origin.
         
@@ -45,7 +45,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         return True
     
     def on_connection(self, request):
-        """_summary_
+        """
         
         Handles the WebSocket connection request.
         
@@ -80,7 +80,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
             self.set_header(key, value)
 
     def open(self):
-        """_summary_
+        """
         
         Handles the WebSocket connection running.
         
@@ -89,7 +89,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         self.world.add_session(self)
         
     def on_close(self):
-        """_summary_
+        """
         
         Handles the WebSocket connection closing.
         
@@ -98,7 +98,7 @@ class TornadoMainHandler(tornado.websocket.WebSocketHandler):
         self.world.remove_session(self)
         
     def on_message(self, message):
-        """_summary_
+        """
         
         Handles the WebSocket message.
         

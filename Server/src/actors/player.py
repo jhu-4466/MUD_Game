@@ -23,7 +23,7 @@ from utils.proto.se_world_pb2 import ActorType, PlayerAttr
 
 
 class Player(Actor):
-    """_summary_
+    """
 
     the base actor.
 
@@ -52,7 +52,7 @@ class Player(Actor):
         self.add_component("bag", self.bag)
 
     def tick(self, delta_time):
-        """_summary_
+        """
 
         tick self state and all components.
 

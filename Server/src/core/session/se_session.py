@@ -12,7 +12,7 @@
 
 
 class SESession():
-    """_summary_
+    """
     
     it holds the session from one client.
     

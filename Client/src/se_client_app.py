@@ -22,7 +22,7 @@ import signal
 
 
 class SEClientApp:
-    """_summary_
+    """
     
     As a client, combining pyqt and tornado.
     
@@ -51,7 +51,7 @@ class SEClientApp:
             self.editor_app_main_window.register_plugin(plugin)
         
     def start(self):
-        """_summary_
+        """
         
         Runs SE_Client_App.
 
@@ -65,7 +65,7 @@ class SEClientApp:
         self.editor_app.exec_()
     
     def close(self):
-        """_summary_
+        """
         
         Close SE_Client_App.
 

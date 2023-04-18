@@ -23,7 +23,7 @@ import threading
 
 
 class TornadoServiceServer:
-    """_summary_
+    """
     
     it controls the tornado server end.
     
@@ -46,7 +46,7 @@ class TornadoServiceServer:
         self.____io_loop____ = tornado.ioloop.IOLoop()
 
     def on_start(self, port: int=8080):
-        """_summary_
+        """
 
         reload the function named start to start the tornado.
         
@@ -69,7 +69,7 @@ class TornadoServiceServer:
 
 
 class TornadoServerThread(threading.Thread):
-    """_summary_
+    """
     
     To avoid the stoppage between tick and tornado.
     

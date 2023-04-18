@@ -19,7 +19,7 @@ from PyQt5.QtGui import QCloseEvent, QKeyEvent
 
 
 class EditorMainWindow(QMainWindow):
-    """_summary_
+    """
     
     Editor main window.
     
@@ -38,7 +38,7 @@ class EditorMainWindow(QMainWindow):
         self.init_ui()
     
     def init_plugins(self):
-        """_summary_
+        """
         
         init main window plugins and attributes.
         
@@ -46,7 +46,7 @@ class EditorMainWindow(QMainWindow):
         self.plugins = []
     
     def init_ui(self):
-        """_summary_
+        """
         
         init main window ui.
         
@@ -54,7 +54,7 @@ class EditorMainWindow(QMainWindow):
         self.setFixedSize(1024, 768)
 
     def register_plugin(self, plugin):
-        """_summary_
+        """
         
         all plugins register.
         
@@ -74,7 +74,7 @@ class EditorMainWindow(QMainWindow):
             self.setCentralWidget(widget)
 
     def closeEvent(self, event: QCloseEvent):
-        """_summary_
+        """
         
         rewrite closing main window.
         
@@ -83,7 +83,7 @@ class EditorMainWindow(QMainWindow):
         event.ignore()
         
     def keyPressEvent(self, event: QKeyEvent):
-        """_summary_
+        """
         
         rewrite key press event in the main window.
         

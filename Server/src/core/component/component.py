@@ -15,7 +15,7 @@ from core.world.se_world import SEWorld
 
 
 class Component:
-    """_summary_
+    """
 
     the base component.
     
@@ -52,7 +52,7 @@ class Component:
         pass
 
     def tick(self, delta_time):
-        """_summary_
+        """
 
         update component state.
         

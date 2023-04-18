@@ -30,7 +30,7 @@ class ActorMeta(type):
 
 
 class Actor(metaclass=ActorMeta):
-    """_summary_
+    """
 
     the base actor.
 
@@ -92,7 +92,7 @@ class Actor(metaclass=ActorMeta):
         pass
 
     def tick(self, delta_time):
-        """_summary_
+        """
 
         update actor state and all components.
         

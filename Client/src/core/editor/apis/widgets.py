@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import QWidget
 
 
 class PluginMainWidget(QWidget):
-    """_summary_
+    """
     
     base widget.
     
