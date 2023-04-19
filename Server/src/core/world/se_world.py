@@ -15,7 +15,7 @@ from core.session.se_session import SESession
 
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
-from utils.helpers.skill_helper import SkillHelper
+from utils.helpers.skills_helper import SkillsHelper
 
 
 class SEWorld(metaclass=SingletonType):
@@ -40,7 +40,7 @@ class SEWorld(metaclass=SingletonType):
     def on_initialize(self):
         reload_helper.setup()
         
-        self.skill_helper = SkillHelper(self.skill_file)
+        self.skill_helper = SkillsHelper(self.skill_file)
     
     def on_start(self):
         self.tick()

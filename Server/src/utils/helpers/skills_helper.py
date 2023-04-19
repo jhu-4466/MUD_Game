@@ -18,7 +18,7 @@ import json
 from google.protobuf.json_format import ParseDict
 
 
-class SkillHelper:
+class SkillsHelper:
     """
     
     maintains the standard skills.
