@@ -17,7 +17,8 @@ from tests.player_attr_test import player_attr
 
 
 from core.actor.actor import Actor
-from components.bag import BagComponent
+from components.bag import Bag
+from components.skills import Skills
 
 from utils.proto.se_world_pb2 import ActorType, PlayerAttr
 
@@ -48,8 +49,10 @@ class Player(Actor):
         # test attr
         self.actor_attr = player_attr
         
-        self.bag = BagComponent(self)
+        self.bag = Bag(self)
         self.add_component("bag", self.bag)
+        self.skills = Skills(self)
+        self.add_component("skills", self.skills)
 
     def tick(self, delta_time):
         """
@@ -72,14 +75,45 @@ class Player(Actor):
 
     def get_items(self):
         return self.bag.get_items()
+    
+    def learn_skill(self, target_id: str):
+        return self.skills.learn_skill(target_id)
+    
+    def remove_skill(self, target_id: str):
+        return self.skills.remove_skill(target_id)
+    
+    def upgrade_skill_levels(self, target_id, upgrade_count):
+        return self.skills.upgrade_skill_levels(target_id, upgrade_count)
+
+    def demote_skill_levels(self, target_id, demote_count):
+        return self.skills.demote_skill_levels(target_id, demote_count)
+    
+    def reset_skills(self):
+        return self.skills.reset_skills()
 
 
 if __name__ == "__main__":
     from core.world.se_world import SEWorld
     from core.actor.actor import ActorFactory
-    player = ActorFactory.create_actor(ActorType.PLAYER, SEWorld())
-    player.add_item("M0001", 2)
-    print(player.bag.items)
+    player = ActorFactory.create_actor(ActorType.PLAYER, 
+                                       SEWorld("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json"))
+    # player.add_item("M0001", 2)
+    # print(player.bag.items)
+    
+    # print(player.learn_skill("W001"))
+    # print(player.learn_skill("W004"))
+    # print(player.learn_skill("W002"))
+    # print(player.learn_skill("W004"))
+    # print(player.upgrade_skill_levels("W004", 11))
+    # print(player.demote_skill_levels("W002", 1))
+    # print(player.skills)
+    # print("剩余技能点: ", player.actor_attr.skill_points)
+    # print(player.remove_skill("W002"))
+    # print(player.skills)
+    # print("剩余技能点: ", player.actor_attr.skill_points)
+    # print(player.reset_skills())
+    # print(player.skills)
+    # print("剩余技能点: ", player.actor_attr.skill_points)
     
     # try:
     #     while True:

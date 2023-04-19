@@ -4,44 +4,40 @@
             "skill_id": "W001",
             "skill_name": "巫祝",
             "max_skill_level": 10,
-            "cur_skill_level": 0,
             "skill_type": 0,
             "skill_desc": "为友方任一单位在一定时间内维持加生命恢复状态",
             "damage_type": 2,
-            "damage": "100",
+            "damage": ["100"],
             "duration": 3,
             "preconditions": []
         }, {
             "skill_id": "W002",
             "skill_name": "狂暴",
             "max_skill_level": 10,
-            "cur_skill_level": 0,
             "skill_type": 0,
             "skill_desc": "为自身短暂添加攻击力",
             "damage_type": 2,
-            "damage": "10%",
+            "damage": ["10%"],
             "duration": 3,
             "preconditions": ["W001"]
         }, {
             "skill_id": "W004",
             "skill_name": "逢凶化吉",
             "max_skill_level": 10,
-            "cur_skill_level": 0,
             "skill_type": 0,
             "skill_desc": "为自身短暂添加物理防御力与法术防御力",
             "damage_type": 2,
-            "damage": "10%",
+            "damage": ["10%"],
             "duration": 3,
             "preconditions": ["W002"]
         }, {
             "skill_id": "W003",
             "skill_name": "施毒",
             "max_skill_level": 10,
-            "cur_skill_level": 0,
             "skill_type": 0,
             "skill_desc": "给敌方任一单位在一定时间内加持中毒状态",
             "damage_type": 3,
-            "damage": "100",
+            "damage": ["100"],
             "duration": 3,
             "preconditions": ["W001"]
         }

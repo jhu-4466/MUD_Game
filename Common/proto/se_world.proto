@@ -34,6 +34,13 @@ message PlayerAttr {
     int32 magical_defence = 10;
     int32 exp = 13;
     int32 gold = 14;
+    int32 skill_points = 15;  // 技能点
+    repeated LearnedSkill learned_skills = 16;  // 已学技能
+}
+
+message LearnedSkill {
+    string skill_id = 1;
+    int32 cur_skill_level = 2;
 }
 
 message NPCAttr {
@@ -77,11 +84,11 @@ message SkillAttr {
     string skill_id = 1;
     string skill_name = 2;
     int32 max_skill_level = 3;
-    int32 cur_skill_level = 4;
+    // int32 cur_skill_level = 4;
     SkillType skill_type = 5;
     string skill_desc = 6;  // description
     SkillType damage_type = 7;  // damage type, such as physical and magical
-    string damage = 8;  // damage value
+    repeated string damage = 8;  // damage value
     int32 duration = 9;  // skill state duration
     repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
 }

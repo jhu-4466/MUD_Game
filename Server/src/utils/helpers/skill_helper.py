@@ -6,8 +6,9 @@
 # Created: 2023.04.17
 # Description: skill tree helper
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    m14         v0.5         2023/04/18    basic build
+#       <autohr>       <version>      <time>        <desc>
+#         m14           v0.5        2023/04/18      basic build
+#         m14           v0.5        2023/04/19      complete build
 # -----------------------------
 
 
@@ -69,4 +70,24 @@ class SkillHelper:
         Returns:
             SkillAttr: skill proto message 
         """
-        return self.____standard_skills____[skill_id]
+        try:
+            return self.____standard_skills____[skill_id]
+        except:
+            return None
+
+    def find_learned_skills_ids(self, learned_skills):
+        """
+        
+        find actor's learned skills ids.
+
+        Args:
+            learned_skills (List[LearnedSkill]): actor's learned skills
+        Returns:
+            ids: actor's learned skills ids.
+        """
+        ids = set()
+        
+        for skill in learned_skills:
+            ids.add(skill.skill_id)
+        
+        return ids

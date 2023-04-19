@@ -16,7 +16,7 @@ from core.component.component import Component
 from tests.test_items_list import items
 
 
-class BagComponent(Component):
+class Bag(Component):
     """
 
     the base component.
