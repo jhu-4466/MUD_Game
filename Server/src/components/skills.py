@@ -25,7 +25,7 @@ class Skills(Component):
         owner (str): The player character who owns this component.
         learned_skills (LearnedSkill): skill have been learned.
     """
-    component_name: str = "SkillTree"
+    component_name: str = "Skills"
 
     def __init__(self, owner):
         super().__init__(owner)
@@ -43,7 +43,7 @@ class Skills(Component):
         Returns:
             bool: True if the skill is learned successfully, False otherwise.
         """
-        if target_id in self.learned_skills:
+        if target_id in self.learned_skills or self.owner.actor_attr.skill_points < 1:
             return False
         
         target_skill = SkillAttr()
@@ -55,18 +55,18 @@ class Skills(Component):
         # check preconditions
         preconditions = target_skill.preconditions
         if not preconditions:
-            target = LearnedSkill(skill_id=target_id, cur_skill_level=1)
+            target = LearnedSkill(skill_id=target_id, curr_skill_level=1)
             self.owner.actor_attr.skill_points -= 1
             self.learned_skills.append(target)
             return True
         for precondition in preconditions:
-            learned_skills_ids = self.skill_helper.find_learned_skills_ids(self.learned_skills)
+            learned_skills_ids = self._find_learned_skills_ids()
             if precondition not in learned_skills_ids:
                 return False
             else:
                 continue
             
-        target = LearnedSkill(skill_id=target_id, cur_skill_level=1)
+        target = LearnedSkill(skill_id=target_id, curr_skill_level=1)
         self.owner.actor_attr.skill_points -= 1
         self.learned_skills.append(target)
         return True
@@ -90,7 +90,7 @@ class Skills(Component):
                 if learned_skill.skill_id != curr_remove_id:
                     after_remove_skills.append(learned_skill)
                 else:
-                    self.owner.actor_attr.skill_points += learned_skill.cur_skill_level
+                    self.owner.actor_attr.skill_points += learned_skill.curr_skill_level
             self.learned_skills = after_remove_skills
             
             for learned_skill in self.learned_skills:
@@ -119,13 +119,13 @@ class Skills(Component):
             if learned_skill.skill_id != target_skill.skill_id:
                 continue
             
-            if learned_skill.cur_skill_level + upgrade_count < target_skill.max_skill_level:
-                learned_skill.cur_skill_level += upgrade_count
+            if learned_skill.curr_skill_level + upgrade_count < target_skill.max_skill_level:
+                learned_skill.curr_skill_level += upgrade_count
                 self.owner.actor_attr.skill_points -= upgrade_count
                 return True
             else:
-                self.owner.actor_attr.skill_points -= target_skill.max_skill_level - learned_skill.cur_skill_level
-                learned_skill.cur_skill_level = target_skill.max_skill_level
+                self.owner.actor_attr.skill_points -= target_skill.max_skill_level - learned_skill.curr_skill_level
+                learned_skill.curr_skill_level = target_skill.max_skill_level
                 return True
             
         return False
@@ -146,10 +146,10 @@ class Skills(Component):
             if learned_skill.skill_id != target_skill.skill_id:
                 continue
             
-            if learned_skill.cur_skill_level >= demote_count:
-                learned_skill.cur_skill_level -= demote_count
+            if learned_skill.curr_skill_level >= demote_count:
+                learned_skill.curr_skill_level -= demote_count
                 self.owner.actor_attr.skill_points += demote_count
-                if learned_skill.cur_skill_level == 0:
+                if learned_skill.curr_skill_level == 0:
                     self.remove_skill(target_id)
                 return True
             
@@ -163,10 +163,25 @@ class Skills(Component):
         """
         while self.learned_skills:
             curr_remove_skill = self.learned_skills.pop()
-            self.owner.actor_attr.skill_points += curr_remove_skill.cur_skill_level
+            self.owner.actor_attr.skill_points += curr_remove_skill.curr_skill_level
             self.remove_skill(curr_remove_skill.skill_id)
         
         return True
+    
+    def _find_learned_skills_ids(self):
+        """
+        
+        find actor's learned skills ids.
+        
+        Returns:
+            ids: actor's learned skills ids.
+        """
+        ids = set()
+        
+        for skill in self.learned_skills:
+            ids.add(skill.skill_id)
+        
+        return ids
     
     def __repr__(self):
         output = "已学技能：\n"
@@ -174,6 +189,6 @@ class Skills(Component):
         for learned_skill in self.learned_skills:
             skill_attr = self.skill_helper.find_a_skill(learned_skill.skill_id)
             output += f"{skill_attr.skill_name}({learned_skill.skill_id}): {skill_attr.skill_desc}\n"
-            output += f"\t当前等级: {learned_skill.cur_skill_level}\n"
+            output += f"\t当前等级: {learned_skill.curr_skill_level}\n"
         
         return output

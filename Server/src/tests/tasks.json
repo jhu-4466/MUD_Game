@@ -1,0 +1,54 @@
+[    
+    {
+        "task_id": "T001",
+        "task_name": "行走江湖的准备（一）",
+        "task_desc": "想要行走江湖，首先要拜访一位名家。",
+        "task_dialogs": [
+            "孩子，现在是修行最好的时代，你想修行吗？",
+            "无论你想不想，你都给我滚去找郡里的秀才！"],
+        "task_target": [{"tt_type": 3}],
+        "task_reward": [
+            {"tr_type": 1, "tr_content": "100"},
+            {"tr_type": 2, "tr_content": "50"},
+            {"tr_type": 4, "tr_content": "NPC002"}
+        ],
+        "trigger_conditions": [
+            {"tc_type": 0, "tc_content": "0"}
+        ],
+        "assigned_npcid": "NPC001"
+    }, {
+        "task_id": "T002",
+        "task_name": "行走江湖的准备（二）",
+        "task_desc": "为了能让你顺利走江湖，你还要学会一门看家本领。",
+        "task_dialogs": [
+            "光拜访了名家还不够，你还要学习本领。",
+            "在老夫的教导下，开始学习本领吧！"],
+        "task_target": [{"tt_type": 0, "tt_content": "1"}],
+        "task_reward": [
+            {"tr_type": 1, "tr_content": "100"},
+            {"tr_type": 2, "tr_content": "50"}
+        ],
+        "trigger_conditions": [
+            {"tc_type": 0, "tc_content": "0"},
+            {"tc_type": 1, "tc_content": "T001"}
+        ],
+        "assigned_npcid": "NPC002"
+    }, {
+        "task_id": "T003",
+        "task_name": "行走江湖的准备（三）",
+        "task_desc": "你已经学会了一点战斗本领，你可以跟着大队外出长见识了。",
+        "task_dialogs": [
+            "嗯，进度还不错，去千相馆找许廷秀吧。"],
+        "task_target": [{"tt_type": 3}],
+        "task_reward": [
+            {"tr_type": 1, "tr_content": "100"},
+            {"tr_type": 2, "tr_content": "50"},
+            {"tr_type": 3, "tr_content": "NPC003"}
+        ],
+        "trigger_conditions": [
+            {"tc_type": 0, "tc_content": "3"},
+            {"tc_type": 1, "tc_content": "T002"}
+        ],
+        "assigned_npcid": "NPC002"
+    }
+]

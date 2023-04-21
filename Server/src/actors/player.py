@@ -19,6 +19,7 @@ from tests.player_attr_test import player_attr
 from core.actor.actor import Actor
 from components.bag import Bag
 from components.skills import Skills
+from components.tasks import Tasks
 
 from utils.proto.se_world_pb2 import ActorType, PlayerAttr
 
@@ -53,6 +54,8 @@ class Player(Actor):
         self.add_component("bag", self.bag)
         self.skills = Skills(self)
         self.add_component("skills", self.skills)
+        self.tasks = Tasks(self)
+        self.add_component("tasks", self.tasks)
 
     def tick(self, delta_time):
         """
@@ -90,7 +93,15 @@ class Player(Actor):
     
     def reset_skills(self):
         return self.skills.reset_skills()
-
+    
+    def trigger_a_task(self, task_id, npc_id):
+        return self.tasks.trigger_a_task(task_id, npc_id)
+    
+    def task_next_step(self, task_id, npc_id):
+        return self.tasks.task_next_step(task_id, npc_id)
+    
+    def finish_a_task(self, task_id, npc_id):
+        return self.tasks.finish_a_task(task_id, npc_id)
 
 if __name__ == "__main__":
     from core.world.se_world import SEWorld

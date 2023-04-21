@@ -13,7 +13,7 @@
 
 from core.component.component import Component
 
-from tests.test_items_list import items
+from tests.test_items_list import test_items
 
 
 class Bag(Component):
@@ -22,21 +22,24 @@ class Bag(Component):
     the base component.
     
     Args:
-        owner_id(str): belongs to one actor.
-        owner_attr: actor attr.
-        items: all items in a actor package.
+        owner: an actor.
+        ____items____: all items in a actor package.
     """
     component_name = "Bag"
     
     def __init__(self, owner):
         super().__init__(owner)
         
-        self.items = {}
+        self.____items____ = {}
     
     def tick(self, delta_time):
         pass
     
-    def add_item(self, item_id: str, item_amount: int):
+    @property
+    def items(self):
+        return self.____items____
+    
+    def add_items(self, item_id: str, item_amount: int):
         """
 
         Put item into the bage
@@ -45,14 +48,14 @@ class Bag(Component):
             item_id (str): item id
             item_amount (int): item amount
         """
-        if item_id not in self.items:
-            self.items[item_id] = item_amount
+        if item_id not in self.____items____:
+            self.____items____[item_id] = item_amount
         else:
-            self.items[item_id] += item_amount
+            self.____items____[item_id] += item_amount
         
         # use database helper to commit the update
     
-    def remove_item(self, item_id: str, item_amount: int):
+    def remove_items(self, item_id: str, item_amount: int):
         """
 
         Throw item from the bage
@@ -61,12 +64,12 @@ class Bag(Component):
             item_id (str): item id
             item_amount (int): item amount
         """
-        curr_amount = self.items[item_id]
+        curr_amount = self.____items____[item_id]
         
         if curr_amount <= item_amount:
-            self.items.pop(item_id)
+            self.____items____.pop(item_id)
         else:
-            self.items[item_id] -= item_amount
+            self.____items____[item_id] -= item_amount
         
         # use database helper to commit the update
 
@@ -79,12 +82,12 @@ class Bag(Component):
             item_id (str): item id
             item_amount (int): item amount
         """
-        curr_amount = self.items[item_id]
+        curr_amount = self.____items____[item_id]
         
         if item_amount > curr_amount:
             return 
         
-        self.owner.actor_attr.gold += items[item_id].price * item_amount
+        self.owner.actor_attr.gold += test_items[item_id].price * item_amount
         self.remove_item(item_id, item_amount)
     
     def buy_item(self, item_id: str, item_amount: int):
@@ -92,4 +95,7 @@ class Bag(Component):
         pass
 
     def get_items(self):
-        return self.items
+        return self.____items____
+    
+    def get_a_item(self, item_id):
+        return self.____items____[item_id]

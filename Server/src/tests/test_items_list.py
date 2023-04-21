@@ -9,7 +9,7 @@
 
 from utils.proto.se_world_pb2 import ItemType, Item
 
-items = {}
+test_items = {}
 
 blue_steel = Item(
     item_id = "M0001",
@@ -21,4 +21,4 @@ blue_steel = Item(
     strength = 222,
     stiffness = 333,
 )
-items[blue_steel.item_id] = blue_steel
+test_items[blue_steel.item_id] = blue_steel

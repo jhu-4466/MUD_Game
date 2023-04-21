@@ -74,20 +74,3 @@ class SkillsHelper:
             return self.____standard_skills____[skill_id]
         except:
             return None
-
-    def find_learned_skills_ids(self, learned_skills):
-        """
-        
-        find actor's learned skills ids.
-
-        Args:
-            learned_skills (List[LearnedSkill]): actor's learned skills
-        Returns:
-            ids: actor's learned skills ids.
-        """
-        ids = set()
-        
-        for skill in learned_skills:
-            ids.add(skill.skill_id)
-        
-        return ids

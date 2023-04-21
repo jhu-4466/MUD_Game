@@ -23,4 +23,5 @@ player_attr = PlayerAttr(
     exp = 2000,
     gold = 1000,
     skill_points = 30,
+    knew_npcids = ["NPC001"]
 )

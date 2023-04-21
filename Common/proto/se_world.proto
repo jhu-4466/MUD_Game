@@ -21,6 +21,16 @@ message ActorAttr {
     ActorType actor_type = 3;
 }
 
+message RunningTask {
+    string task_id = 1;
+    int32 curr_index = 2;
+}
+
+message LearnedSkill {
+    string skill_id = 1;
+    int32 curr_skill_level = 2;
+}
+
 message PlayerAttr {
     ActorAttr basic_attr = 1;
     int32 level = 2;
@@ -36,11 +46,11 @@ message PlayerAttr {
     int32 gold = 14;
     int32 skill_points = 15;  // 技能点
     repeated LearnedSkill learned_skills = 16;  // 已学技能
-}
-
-message LearnedSkill {
-    string skill_id = 1;
-    int32 cur_skill_level = 2;
+    repeated string standby_tasks = 17;  // 可接任务
+    repeated RunningTask running_tasks = 18;  // 正在进行任务
+    repeated string finished_tasks = 19;  // 已完成任务
+    repeated string knew_npcids = 20;  // 已经知道的npc，这将影响界面显示
+    map<string, string> other_message = 21;  // 其他信息，包括战斗、任务获得
 }
 
 message NPCAttr {
@@ -81,16 +91,71 @@ enum DamageType {
 
 message SkillAttr {
     // 技能节点
-    string skill_id = 1;
+    string skill_id = 1;  // 以巫术为例：SWxxx
     string skill_name = 2;
     int32 max_skill_level = 3;
-    // int32 cur_skill_level = 4;
+    // int32 curr_skill_level = 4;
     SkillType skill_type = 5;
     string skill_desc = 6;  // description
     SkillType damage_type = 7;  // damage type, such as physical and magical
     repeated string damage = 8;  // damage value
     int32 duration = 9;  // skill state duration
     repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
+}
+
+// enum TaskStatus {
+//     STANDBY = 0;  // When actor satisfy the preconditions
+//     RUNNING = 1;
+//     FINISHED = 2;
+//     UNAVAILBLE = 3;  // if actor don't satisfy the preconditions
+// }
+
+enum TaskTriggerConditionsType {
+    LEVEL = 0;
+    PRETASK = 1;
+}
+
+message TaskTriggerConditions {
+    TaskTriggerConditionsType tc_type = 1;  // level, pretask
+    string tc_content = 2;
+}
+
+enum TaskTargetType {
+    LEARNSKILL = 0;  // 学习技能
+    SKILLLEVEL = 1;  // 技能等级
+    ITEM = 2;  // 物品
+    NONE = 3;
+}
+
+message TaskTarget {
+    TaskTargetType tt_type = 1; // 任务目标
+    string tt_content = 2;
+    int32 tt_counts = 3;  // 如果是item，将需要明确数量
+}
+
+enum TaskRewardType {
+    SKILLPOINTS = 0;  // 技能点
+    EXP = 1;  // 经验
+    GOLD = 2;  // 金币
+    ITEMS = 3;  // 物品
+    NPCS = 4;  // 完成某些任务时，可能会触发新的NPC
+}
+
+message TaskReward {
+    TaskRewardType tr_type = 1;
+    string tr_content = 2;
+    string tr_amount = 3;  // 如果奖励item，将需要明确数量
+}
+
+message TaskAttr {
+    string task_id = 1;  // Txxx
+    string task_name = 2;
+    string task_desc = 3;
+    repeated string task_dialogs = 4;
+    repeated TaskTarget task_target = 5;
+    repeated TaskReward task_reward = 6;
+    repeated TaskTriggerConditions trigger_conditions = 8;
+    string assigned_npcid = 9;  // a task is only associated with a npc, but a npc may has many tasks.
 }
 
 message Combat {
