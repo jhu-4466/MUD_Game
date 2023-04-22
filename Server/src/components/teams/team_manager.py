@@ -22,6 +22,8 @@ class TeamManager(Component):
     
     a team manager component holds on all teams instances in the world.
     
+    Args:
+        teams: all teams instances in the world.
     """
     component_name: str = "TeamManager"
     
@@ -34,16 +36,36 @@ class TeamManager(Component):
         self.teams = {}
     
     def add_a_team(self, actor_id):
+        """
+        
+        build a new team
+
+        Args:
+            actor_id (str): the captain id
+        Returns:
+            bool: whether add successfully?
+        """
         date_time = datetime.datetime.now()
         team_id = "TEAM" + \
             date_time.strftime("%Y%m%d%H%M%S") + actor_id
         
         self.teams[team_id] = Team(team_id, self.owner.players[actor_id])
         
-        return team_id
+        return True
     
     def remove_a_team(self, team_id):
+        """
+        
+        remove a team
+
+        Args:
+            team_id (str): the team id
+        Returns:
+            bool: whether add successfully?
+        """
         for actor_id in self.teams[team_id].members:
             self.owner.players[actor_id].actor_attr.owned_team_id = ""
         
         self.teams.pop(team_id)
+        
+        return True

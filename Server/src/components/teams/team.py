@@ -19,18 +19,26 @@ class Team(Component):
     
     a team component holds on all players or npcs in one team
     
+    Args:
+        team_id: a guid in the world based on datetime and captain id.
+        captain: holds the captain id.
+        members: holds all members id.
     """
     component_name: str = "Team"
     
     def __init__(self, team_id, player):
         self.____team_id____ = team_id
         
+        self.captain = None
         self.members = set()
         
         self.on_initialize(player)
 
     def on_initialize(self, player):
-        self.members.add(player.actor_attr.basic_attr.actor_id)
+        actor_id = player.actor_attr.basic_attr.actor_id
+        
+        self.captain = actor_id
+        self.members.add(actor_id)
         player.actor_attr.owned_team_id = self.____team_id____
     
     @property
