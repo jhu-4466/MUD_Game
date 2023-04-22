@@ -9,13 +9,19 @@
 #    <autohr>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/11    basic build
 # -----------------------------
+# test
+import sys
+sys.path.append("../../")
 
 
 from core.session.se_session import SESession
 
+from components.teams.team_manager import TeamManager
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
 from utils.helpers.skills_helper import SkillsHelper
+
+import multiprocessing
 
 
 class SEWorld(metaclass=SingletonType):
@@ -32,18 +38,27 @@ class SEWorld(metaclass=SingletonType):
         self.initialize()
     
     def initialize(self):
+        # self.process_manager = multiprocessing.Manager()
+        # self.players = self.process_manager.dict()
+        # self.sessions = self.process_manager.dict()
+        self.players = {}
         self.sessions = {}
+        
         self.skilltree_helper = None
+        self.team_manager = None
         
         self.on_initialize()
     
     def on_initialize(self):
         reload_helper.setup()
         
-        self.skill_helper = SkillsHelper(self.skill_file)
-    
+        self.skill_helper = SkillsHelper(self, self.skill_file)
+        
+        self.team_manager = TeamManager(self)
+        
     def on_start(self):
-        self.tick()
+        self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
+        self.tick_process.start()
     
     def tick(self):
         """
@@ -90,3 +105,34 @@ class SEWorld(metaclass=SingletonType):
         """
         for session in self.sessions.values():
             session.connection.write_message(message)
+    
+    def add_a_combat(self, combat_a_id, combat_b_id):
+        team_a_id, team_b_id = combat_a_id, combat_b_id
+        if "TEAM" not in team_a_id:
+            team_a_id = self.team_manager.add_a_team(team_a_id)
+        if "TEAM" not in team_b_id:
+            team_b_id = self.team_manager.add_a_team(team_b_id)
+        
+        return team_a_id, team_b_id
+
+
+if __name__ == "__main__":
+    from tests.attr_test import player_attr, npc_attr
+    from actors.player import Player
+    
+    world = SEWorld("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")
+    world.players[player_attr.basic_attr.actor_id] = Player(world)
+    world.players[npc_attr.basic_attr.actor_id] = Player(world)
+    player = world.players[player_attr.basic_attr.actor_id]
+    npc = world.players[npc_attr.basic_attr.actor_id]
+    player.actor_attr = player_attr
+    npc.actor_attr = npc_attr
+    
+    a, b = world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
+    
+    world.team_manager.remove_a_team(a)
+    world.team_manager.remove_a_team(b)
+    
+    print(player.actor_attr)
+    print(npc.actor_attr)
+    

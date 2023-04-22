@@ -27,7 +27,8 @@ class SkillsHelper:
         file_path: skill data file.
         ____standard_skills____: standard all skills.
     """
-    def __init__(self, file_path: str):
+    def __init__(self, owner, file_path: str):
+        self.owner = owner
         self.file_path = file_path
         
         self.initialize()

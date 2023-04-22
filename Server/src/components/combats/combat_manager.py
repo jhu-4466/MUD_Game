@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*- #
 
 # -----------------------------
-# Topic: combat scene component
+# Topic: combat manager component
 # Author: m14
 # Created: 2023.04.22
-# Description: a combat scene component that keep track of all combat instances.
+# Description: a combat manager component that keep track of all combat instances.
 # History:
 #       <autohr>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/      basic build

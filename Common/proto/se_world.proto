@@ -21,14 +21,12 @@ message ActorAttr {
 }
 
 message NumericAttr {
-    int32 level = 1;
     int32 hp = 2;
     int32 mp = 3;
     int32 physical_damage = 6;
     int32 magical_damage = 7;
     int32 physical_defence = 8;
     int32 magical_defence = 9;
-    int32 exp = 14;
 }
 
 message RunningTask {
@@ -54,6 +52,8 @@ message MoreInfo {
 message PlayerAttr {
     ActorAttr basic_attr = 1;
     NumericAttr numeric_attr = 2;
+    int32 level = 3;
+    int32 exp = 4;
     int32 gold = 14;
     int32 skill_points = 15;  // 技能点
     repeated LearnedSkill learned_skills = 16;  // 已学技能
@@ -68,11 +68,13 @@ message PlayerAttr {
 message NPCAttr {
     ActorAttr basic_attr = 1;
     NumericAttr numeric_attr = 2;
-    repeated LearnedSkill learned_skills = 3;  // 已学技能
-    repeated string order_moves = 4;  // 出招顺序
+    int32 level = 3;
+    repeated LearnedSkill learned_skills = 4;  // 已学技能
+    repeated string order_moves = 5;  // 出招顺序
     // 仅用于客户端，因为服务端都是有独立的组件完成各自功能；
-    repeated string owned_tasks = 5;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
-    repeated string owned_functions = 6;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
+    repeated string owned_tasks = 6;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
+    repeated string owned_functions = 7;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
+    string owned_team_id = 8;
 }
 
 enum SkillType {
