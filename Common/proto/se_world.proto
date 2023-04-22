@@ -5,7 +5,6 @@ enum ActorType {
     ACTOR = 0;
     PLAYER = 1;
     NPC = 2;  // 友好的NPC
-    MONSTER = 3;  // 怪物（战斗对象）
 }
 
 enum ItemType{
@@ -21,6 +20,17 @@ message ActorAttr {
     ActorType actor_type = 3;
 }
 
+message NumericAttr {
+    int32 level = 1;
+    int32 hp = 2;
+    int32 mp = 3;
+    int32 physical_damage = 6;
+    int32 magical_damage = 7;
+    int32 physical_defence = 8;
+    int32 magical_defence = 9;
+    int32 exp = 14;
+}
+
 message RunningTask {
     string task_id = 1;
     int32 curr_index = 2;
@@ -31,18 +41,19 @@ message LearnedSkill {
     int32 curr_skill_level = 2;
 }
 
+enum MoreInfoType {
+    REWARD = 0;
+}
+
+message MoreInfo {
+    MoreInfoType info_type = 1;
+    string info_content = 2;
+    string info_amount = 3;
+}
+
 message PlayerAttr {
     ActorAttr basic_attr = 1;
-    int32 level = 2;
-    int32 max_hp = 3;
-    int32 max_mp = 4;
-    int32 cur_hp = 5;
-    int32 cur_mp = 6;
-    int32 physical_damage = 7;
-    int32 magical_damage = 8;
-    int32 physical_defence = 9;
-    int32 magical_defence = 10;
-    int32 exp = 13;
+    NumericAttr numeric_attr = 2;
     int32 gold = 14;
     int32 skill_points = 15;  // 技能点
     repeated LearnedSkill learned_skills = 16;  // 已学技能
@@ -50,27 +61,18 @@ message PlayerAttr {
     repeated RunningTask running_tasks = 18;  // 正在进行任务
     repeated string finished_tasks = 19;  // 已完成任务
     repeated string knew_npcids = 20;  // 已经知道的npc，这将影响界面显示
-    map<string, string> other_message = 21;  // 其他信息，包括战斗、任务获得
+    string owned_team_id = 21;  // 所属队伍ID
+    repeated MoreInfo more_info = 22;  // 其他信息，包括战斗、任务获得，主要用于文本展示
 }
 
 message NPCAttr {
     ActorAttr basic_attr = 1;
-    repeated string dialogues = 2;
-    int32 accept_quest_id = 4;
-    int32 complete_quest_id = 5;
-}
-
-message MonsterAttr {
-    ActorAttr basic_attr = 1;
-    int32 level = 2;
-    int32 max_hp = 3;
-    int32 max_mp = 4;
-    int32 cur_hp = 5;
-    int32 cur_mp = 6;
-    int32 physical_damage = 7;
-    int32 magical_damage = 8;
-    int32 physical_defence = 9;
-    int32 magical_defence = 10;
+    NumericAttr numeric_attr = 2;
+    repeated LearnedSkill learned_skills = 3;  // 已学技能
+    repeated string order_moves = 4;  // 出招顺序
+    // 仅用于客户端，因为服务端都是有独立的组件完成各自功能；
+    repeated string owned_tasks = 5;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
+    repeated string owned_functions = 6;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
 }
 
 enum SkillType {

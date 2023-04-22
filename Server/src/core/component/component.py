@@ -11,9 +11,6 @@
 # -----------------------------
 
 
-from core.world.se_world import SEWorld
-
-
 class Component:
     """
 

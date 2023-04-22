@@ -13,7 +13,7 @@
 # test import
 import sys
 sys.path.append("../")
-from tests.player_attr_test import player_attr
+from tests.attr_test import player_attr
 
 
 from core.actor.actor import Actor
@@ -47,7 +47,8 @@ class Player(Actor):
         super().__init__(world)
 
     def on_initialize(self):
-        # test attr
+        # test attr. 
+        # when connecting the database, it should complete a function like load_proto to change the attr during init.
         self.actor_attr = player_attr
         
         self.bag = Bag(self)
