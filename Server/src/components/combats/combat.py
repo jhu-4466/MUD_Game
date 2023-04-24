@@ -26,12 +26,12 @@ class Combat(Component):
     """
     component_name: str = "Combat"
 
-    def __init__(self, owner, combat_id, team_a_id, team_b_id):
+    def __init__(self, owner, combat_id, combat_reward, team_a_id, team_b_id):
         super().__init__(owner)
         
-        self.initialize(combat_id, team_a_id, team_b_id)
+        self.initialize(combat_id, combat_reward, team_a_id, team_b_id)
 
-    def initialize(self, combat_id, team_a_id, team_b_id, max_turn_time=100):
+    def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, max_turn_time=100):
         """
         
         Initiates a combat between the specified members.
@@ -42,7 +42,7 @@ class Combat(Component):
         self.combat_id = combat_id
         self.combat_state = CombatState.STANDBY
         self.combat_winner = None
-        self.combat_reward = None
+        self.combat_reward = combat_reward
         
         self.max_turn_time = max_turn_time
         
@@ -59,27 +59,28 @@ class Combat(Component):
         Event triggered when a combat starts.
         
         """
-        self.members = self._get_all_members(team_a_id, team_b_id)
+        self.members.update(self._get_all_members(team_a_id))
+        self.members.update(self._get_all_members(team_b_id))
         
         self.combat_state = CombatState.RUNNING
 
-    def _get_all_members(self, team_a_id: str, team_b_id: str):
-        team_a = self.owner.owner.team_manager.find_a_team(team_a_id)
-        team_b = self.owner.owner.team_manager.find_a_team(team_b_id)
-        members = {}
-        for member_id in team_a.members:
-            member = self._get_player_state(member_id)
-            members[member_id] = member
-            if team_a_id not in self.members_state:
-                self.members_state[team_a_id] = 0
-            self.members_state[team_a_id] += 1
+    def _get_all_members(self, team_id):
+        """_summary_
 
-        for member_id in team_b.members:
+        Args:
+            team_id (str): the id of a team.
+        Returns:
+            members: members in the team.
+        """
+        members = {}
+        
+        team = self.owner.owner.team_manager.find_a_team(team_id)
+        for member_id in team.members:
             member = self._get_player_state(member_id)
             members[member_id] = member
-            if team_b_id not in self.members_state:
-                self.members_state[team_b_id] = 0
-            self.members_state[team_b_id] += 1
+            if team_id not in self.members_state:
+                self.members_state[team_id] = 0
+            self.members_state[team_id] += 1
 
         return members
 
@@ -90,9 +91,8 @@ class Combat(Component):
 
         Args:
             member_id (str): the ID of the player to get the state for.
-
         Returns:
-            Dict[str, any]: a dictionary containing the state of the player.
+            member_attr: a ActorAttr message.
         """
         # It needs to be loaded with more things, like passive skills influence
         member = self.owner.owner.players[member_id]
@@ -121,13 +121,13 @@ class Combat(Component):
             return
 
         for member in self.members.values():
-            member.actor_attr.combat_info.turn_time_left -= \
-                int(delta_time * member.actor_attr.combat_info.combat_numeric.speed)
-            if member.actor_attr.combat_info.turn_time_left <= 0:
-                self.combat_state = CombatState.STOP
-                self.curr_member_id = member.actor_attr.basic_attr.actor_id
-                self.prompt_member_action(self.curr_member_id)
-                break
+            if self.combat_state == CombatState.RUNNING:
+                member.actor_attr.combat_info.turn_time_left -= \
+                    int(delta_time * member.actor_attr.combat_info.combat_numeric.speed)
+                if member.actor_attr.combat_info.turn_time_left <= 0:
+                    self.combat_state = CombatState.STOP
+                    self.curr_member_id = member.actor_attr.basic_attr.actor_id
+                    self.prompt_member_action(self.curr_member_id)
 
     def prompt_member_action(self, member_id):
         """
@@ -149,9 +149,12 @@ class Combat(Component):
         Applies the specified action to the specified player.
 
         Args:
-            member_id (str): the ID of the player applying the action.
-            action (Dict[str, str]): the action to apply.
+            member_id (str): the ID of the member applying the action.
+            target_id (str): the id of the target.
+            action (CombatAction): the action to apply.
         """
+        if member_id != self.curr_member_id:
+            return
         member = self.members[member_id]
         target = self.members[target_id]
         if member.actor_attr.combat_info.turn_time_left > 0:
@@ -161,6 +164,7 @@ class Combat(Component):
             self._apply_normal_action(member, target)
         elif action.action_type == CombatActionType.SKILL:
             self._apply_skill_action(member, target, action)
+        self.curr_member_id = None
         member.actor_attr.combat_info.turn_time_left = self.max_turn_time
         
         if target.actor_attr.combat_info.combat_numeric.hp <= 0:
@@ -169,28 +173,53 @@ class Combat(Component):
         self.check_combat_state()
     
     def _apply_normal_action(self, member, target):
-        target.actor_attr.combat_info.combat_numeric.hp -= member.actor_attr.combat_info.combat_numeric.physical_damage
+        """
+        
+        normal action
+
+        Args:
+            member (ActorAttr): the attr of the member applying the action.
+            target (ActorAttr): the attr of the target.
+        """        
+        target.actor_attr.combat_info.combat_numeric.hp -= \
+            member.actor_attr.combat_info.combat_numeric.physical_damage
     
     def _apply_skill_action(self, member, target, action):
+        """
+        
+        normal action
+
+        Args:
+            member (ActorAttr): the attr of the member applying the action.
+            target (ActorAttr): the attr of the target.
+        """      
         skill = self.owner.owner.skills_helper.find_a_skill(action.skill_id)
-        for skill in member.skills.learned_skills:
-            if skill.skill_id == action.skill_id:
-                skill_level = skill.curr_skill_level
-                break
+        skill_level = member.skills.find_a_skill(action.skill_id)
+        print(member.actor_attr)
+        print(member.skills)
+        if not skill_level:
+            return
         
         # it needs more operations
         if skill.damage_type == DamageType.PHYSICAL:
-            target.actor_attr.combat_info.combat_numeric.hp -= skill.damage[skill_level - 1] * \
-                member.actor_attr.combat_info.combat_numeric.physical_damage
+            target.actor_attr.combat_info.combat_numeric.hp -= \
+                skill.damage[skill_level - 1] * member.actor_attr.combat_info.combat_numeric.physical_damage
         elif skill.damage_type == DamageType.MAGICAL:
-            target.actor_attr.combat_info.combat_numeric.hp -= skill.damage[skill_level - 1] * \
-                member.actor_attr.combat_info.combat_numeric.magical_damage
+            target.actor_attr.combat_info.combat_numeric.hp -= \
+                skill.damage[skill_level - 1] * member.actor_attr.combat_info.combat_numeric.magical_damage
         elif skill.damage_type == DamageType.BUFF:
             pass
         elif skill.damage_type == DamageType.DEBUFF:
             pass
+            
+        print(target.actor_attr.combat_info.combat_numeric.hp)
     
     def check_combat_state(self):
+        """
+        
+        checks combat state during every action.
+        
+        """        
         for team_id, alive_amount in self.members_state.items():
             if alive_amount == 0:
                 self.combat_winner = [team for team in self.members_state.keys() if team != team_id][0]
@@ -200,4 +229,13 @@ class Combat(Component):
         self.combat_state = CombatState.RUNNING
     
     def distribute_reward(self):
-        print('WINNER: ', self.combat_winner)
+        """
+        
+        after combat, distribute reward.
+        save reward in the server directly, just add a other_info attr to client.
+        
+        """
+        team = self.owner.owner.team_manager.find_a_team(self.combat_winner)
+        
+        for member_id in team.members:
+            pass

@@ -45,7 +45,7 @@ class CombatManager(Component):
         """
         combat_id = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + \
             f"{team_a_id}_{team_b_id}"
-        combat_instance = Combat(self, combat_id, team_a_id, team_b_id)
+        combat_instance = Combat(self, combat_id, None, team_a_id, team_b_id)
         self.combats.append(combat_instance)
 
     def remove_a_combat(self, combat):

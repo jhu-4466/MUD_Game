@@ -24,7 +24,7 @@ player_attr = PlayerAttr(
         speed = 20,
     ),
     learned_skills = [
-        LearnedSkill(skill_id = "W004", curr_skill_level = 1)
+        LearnedSkill(skill_id = "W003", curr_skill_level = 1)
     ],
     exp = 2000,
     gold = 1000,
@@ -45,7 +45,7 @@ npc_attr = NPCAttr(
         speed = 10,
     ),
     learned_skills = [
-        LearnedSkill(skill_id = "W004", curr_skill_level = 5)
+        LearnedSkill(skill_id = "W003", curr_skill_level = 1)
     ],
     order_moves = ["attack", "W004"]
 )

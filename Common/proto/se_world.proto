@@ -41,10 +41,21 @@ message TeamInfo {
     repeated string members = 2;  // members ids
 }
 
+enum BuffType {
+    // including all BUFF and DEBUFF
+    TREATMENT = 0;   // 治疗
+}
+
+message BuffDuration {
+    BuffType buff_type = 1;
+    int32 remain_time = 2;
+}
+
 message CombatInfo {
     string combat_id = 1;
     NumericAttr combat_numeric = 2;  // 战斗态
     int32 turn_time_left = 3;  // 当前行动条还剩余多少时间
+    repeated BuffDuration buff_duration = 4;
 }
 
 message LearnedSkill {
@@ -117,7 +128,7 @@ message SkillAttr {
     SkillType skill_type = 5;
     DamageType damage_type = 7;  // damage type, such as physical and magical
     repeated string damage = 8;  // damage value
-    int32 duration = 9;  // skill state duration
+    int32 duration = 9;  // skill state duration, a seconds int.
     repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
 }
 

@@ -136,12 +136,14 @@ if __name__ == "__main__":
     player.actor_attr = player_attr
     npc.actor_attr = npc_attr
 
-    world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
+    print(player.skills.learned_skills)
 
-    try:   
-        world.tick()
-    except KeyboardInterrupt:
-        sys.exit()
+    # world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
+
+    # try:   
+    #     world.tick()
+    # except KeyboardInterrupt:
+    #     sys.exit()
     # world.team_manager.remove_a_team(a)
     # world.team_manager.remove_a_team(b)
     

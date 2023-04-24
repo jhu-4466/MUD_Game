@@ -32,7 +32,7 @@ class Skills(Component):
         
         self.learned_skills = self.owner.actor_attr.learned_skills
         self.skills_helper = self.owner.world.skills_helper
-
+        
     def learn_skill(self, target_id: str):
         """
 
@@ -167,6 +167,22 @@ class Skills(Component):
             self.remove_skill(curr_remove_skill.skill_id)
         
         return True
+    
+    def find_a_skill(self, target_id):
+        """
+        
+        find the curr level of the skill
+        
+        Args:
+            target_id: target skill id.
+        """
+        print(target_id)
+        for skill in self.learned_skills:
+            print(skill.skill_id)
+            if skill.skill_id == target_id:
+                return skill.curr_skill_level
+        
+        return None
     
     def _find_learned_skills_ids(self):
         """
