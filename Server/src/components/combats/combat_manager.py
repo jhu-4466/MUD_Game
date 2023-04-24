@@ -7,31 +7,35 @@
 # Description: a combat manager component that keep track of all combat instances.
 # History:
 #       <autohr>       <version>      <time>        <desc>
-#         m14           v0.5        2023/04/      basic build
+#         m14           v0.5        2023/04/24      basic build
 # -----------------------------
 
 
 from core.component.component import Component
 from components.combats.combat import Combat
 
+from utils.proto.se_world_pb2 import CombatState
 
-class CombatScene(Component):
+import datetime
+
+
+class CombatManager(Component):
     """
 
-    A component that manages all combat instances happening in a scene.
+    A component that manages all combat instances happening in the world.
     
     Args:
-        owner(str): belongs to one scene.
+        owner(str): belongs to one world.
     """
-    component_name: str = "CombatScene"
+    component_name: str = "CombatManager"
     activate_flag: bool = False
 
     def __init__(self, owner):
         super().__init__(owner)
         
-        self.combats = {}  # A dictionary to store all combat instances
+        self.combats = []  # A dictionary to store all combat instances
 
-    def add_a_combat(self, team_a, team_b):
+    def add_a_combat(self, team_a_id, team_b_id):
         """
         Add a new combat instance to the scene.
 
@@ -39,34 +43,20 @@ class CombatScene(Component):
             player (Player): The player object participating in the combat.
             npc (NPC): The NPC object participating in the combat.
         """
-        combat_id = f"{team_a.team_id}_{team_b.team_id}"
-        new_combat_instance = Combat(players)
-        self.combats[combat_id] = new_combat_instance
+        combat_id = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + \
+            f"{team_a_id}_{team_b_id}"
+        combat_instance = Combat(self, combat_id, team_a_id, team_b_id)
+        self.combats.append(combat_instance)
 
-    def remove_a_combat(self, player, npc):
+    def remove_a_combat(self, combat):
         """
         Remove a combat instance from the scene.
 
         Args:
-            player (Player): The player object participating in the combat.
-            npc (NPC): The NPC object participating in the combat.
+            combat: a combat instance
         """
-        combat_id = f"{player.actor_id}_{npc.actor_id}"
-        del self.combats[combat_id]
-
-    def get_combat_instance(self, player, npc):
-        """
-        Retrieve a combat instance from the scene.
-
-        Args:
-            player (Player): The player object participating in the combat.
-            npc (NPC): The NPC object participating in the combat.
-
-        Returns:
-            The CombatInstance object corresponding to the input player and NPC.
-        """
-        combat_id = f"{player.actor_id}_{npc.actor_id}"
-        return self.combats.get(combat_id)
+        self.combats.remove(combat)
+        del combat
 
     def tick(self, delta_time):
         """
@@ -75,7 +65,9 @@ class CombatScene(Component):
         Args:
             delta_time (int): The time elapsed since the last update.
         """
-        for combat in self.combats.values():
-            finish_sign = combat.tick(delta_time)
-            if finish_sign:
+        for combat in self.combats:
+            if combat.is_finished() == CombatState.FINISHED:
+                combat.distribute_reward()
                 self.remove_a_combat(combat)
+                continue
+            combat.tick(delta_time)

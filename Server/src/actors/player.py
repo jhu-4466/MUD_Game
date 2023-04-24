@@ -10,11 +10,6 @@
 #         m14           v0.5        2023/04/15      basic build simply
 # -----------------------------
 
-# test import
-import sys
-sys.path.append("../")
-from tests.attr_test import player_attr
-
 
 from core.actor.actor import Actor
 from components.bag import Bag
@@ -47,9 +42,7 @@ class Player(Actor):
         super().__init__(world)
 
     def on_initialize(self):
-        # test attr. 
         # when connecting the database, it should complete a function like load_proto to change the attr during init.
-        self.actor_attr = player_attr
         
         self.bag = Bag(self)
         self.add_component("bag", self.bag)

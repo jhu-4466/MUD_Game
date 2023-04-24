@@ -31,7 +31,7 @@ class Skills(Component):
         super().__init__(owner)
         
         self.learned_skills = self.owner.actor_attr.learned_skills
-        self.skill_helper = self.owner.world.skill_helper
+        self.skills_helper = self.owner.world.skills_helper
 
     def learn_skill(self, target_id: str):
         """
@@ -47,7 +47,7 @@ class Skills(Component):
             return False
         
         target_skill = SkillAttr()
-        find_result = self.skill_helper.find_a_skill(target_id)
+        find_result = self.skills_helper.find_a_skill(target_id)
         if not find_result:
             return False
         target_skill.CopyFrom(find_result)
@@ -94,7 +94,7 @@ class Skills(Component):
             self.learned_skills = after_remove_skills
             
             for learned_skill in self.learned_skills:
-                tmp = self.skill_helper.find_a_skill(learned_skill.skill_id)
+                tmp = self.skills_helper.find_a_skill(learned_skill.skill_id)
                 if curr_remove_id in tmp.preconditions:
                     to_remove_ids.add(learned_skill.skill_id)
         
@@ -114,7 +114,7 @@ class Skills(Component):
         if self.owner.actor_attr.skill_points < upgrade_count:
             return False
         
-        target_skill = self.skill_helper.find_a_skill(target_id)
+        target_skill = self.skills_helper.find_a_skill(target_id)
         for learned_skill in self.learned_skills:
             if learned_skill.skill_id != target_skill.skill_id:
                 continue
@@ -141,7 +141,7 @@ class Skills(Component):
         Returns:
             a bool means whether demote successfully.
         """
-        target_skill = self.skill_helper.find_a_skill(target_id)
+        target_skill = self.skills_helper.find_a_skill(target_id)
         for learned_skill in self.learned_skills:
             if learned_skill.skill_id != target_skill.skill_id:
                 continue
@@ -187,7 +187,7 @@ class Skills(Component):
         output = "已学技能：\n"
         
         for learned_skill in self.learned_skills:
-            skill_attr = self.skill_helper.find_a_skill(learned_skill.skill_id)
+            skill_attr = self.skills_helper.find_a_skill(learned_skill.skill_id)
             output += f"{skill_attr.skill_name}({learned_skill.skill_id}): {skill_attr.skill_desc}\n"
             output += f"\t当前等级: {learned_skill.curr_skill_level}\n"
         

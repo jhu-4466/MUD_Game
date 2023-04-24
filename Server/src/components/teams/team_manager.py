@@ -51,7 +51,7 @@ class TeamManager(Component):
         
         self.teams[team_id] = Team(team_id, self.owner.players[actor_id])
         
-        return True
+        return team_id
     
     def remove_a_team(self, team_id):
         """
@@ -69,3 +69,6 @@ class TeamManager(Component):
         self.teams.pop(team_id)
         
         return True
+    
+    def find_a_team(self, team_id):
+        return self.teams[team_id]

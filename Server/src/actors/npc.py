@@ -9,9 +9,6 @@
 #       <autohr>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/22      basic build simply
 # -----------------------------
-import sys
-sys.path.append("../")
-from tests.attr_test import npc_attr
 
 
 from core.actor.actor import Actor
@@ -43,10 +40,7 @@ class NPC(Actor):
         super().__init__(world)
     
     def on_initialize(self):
-        # test attr
         # when connecting the database, it should complete a function like load_proto to change the attr during init.
-        # self.load_proto
-        self.actor_attr = npc_attr
         
         self.skills = Skills(self)
         self.add_component("skills", self.skills)

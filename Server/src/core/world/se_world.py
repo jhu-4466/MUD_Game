@@ -17,9 +17,11 @@ sys.path.append("../../")
 from core.session.se_session import SESession
 
 from components.teams.team_manager import TeamManager
+from components.combats.combat_manager import CombatManager
+from utils.helpers.skills_helper import SkillsHelper
+
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
-from utils.helpers.skills_helper import SkillsHelper
 
 import multiprocessing
 
@@ -46,15 +48,17 @@ class SEWorld(metaclass=SingletonType):
         
         self.skilltree_helper = None
         self.team_manager = None
+        self.combat_manager = None
         
         self.on_initialize()
     
     def on_initialize(self):
         reload_helper.setup()
         
-        self.skill_helper = SkillsHelper(self, self.skill_file)
+        self.skills_helper = SkillsHelper(self, self.skill_file)
         
         self.team_manager = TeamManager(self)
+        self.combat_manager = CombatManager(self)
         
     def on_start(self):
         self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
@@ -66,7 +70,10 @@ class SEWorld(metaclass=SingletonType):
         Cycle through the world state, including db, sessions, and so on
         
         """
-        reload_helper.refresh()
+        while True:
+            # reload_helper.refresh()
+            
+            self.combat_manager.tick(1)
     
     def on_close(self):
         self.sessions = {}
@@ -113,26 +120,31 @@ class SEWorld(metaclass=SingletonType):
         if "TEAM" not in team_b_id:
             team_b_id = self.team_manager.add_a_team(team_b_id)
         
-        return team_a_id, team_b_id
+        self.combat_manager.add_a_combat(team_a_id, team_b_id)
 
 
 if __name__ == "__main__":
     from tests.attr_test import player_attr, npc_attr
     from actors.player import Player
+    from actors.npc import NPC
     
     world = SEWorld("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")
     world.players[player_attr.basic_attr.actor_id] = Player(world)
-    world.players[npc_attr.basic_attr.actor_id] = Player(world)
+    world.players[npc_attr.basic_attr.actor_id] = NPC(world)
     player = world.players[player_attr.basic_attr.actor_id]
     npc = world.players[npc_attr.basic_attr.actor_id]
     player.actor_attr = player_attr
     npc.actor_attr = npc_attr
+
+    world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
+
+    try:   
+        world.tick()
+    except KeyboardInterrupt:
+        sys.exit()
+    # world.team_manager.remove_a_team(a)
+    # world.team_manager.remove_a_team(b)
     
-    a, b = world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
-    
-    world.team_manager.remove_a_team(a)
-    world.team_manager.remove_a_team(b)
-    
-    print(player.actor_attr)
-    print(npc.actor_attr)
+    # print(player.actor_attr)
+    # print(npc.actor_attr)
     

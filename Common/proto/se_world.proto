@@ -21,17 +21,30 @@ message ActorAttr {
 }
 
 message NumericAttr {
+    int32 level = 1;
     int32 hp = 2;
     int32 mp = 3;
     int32 physical_damage = 6;
     int32 magical_damage = 7;
     int32 physical_defence = 8;
     int32 magical_defence = 9;
+    int32 speed = 10;
 }
 
 message RunningTask {
     string task_id = 1;
     int32 curr_index = 2;
+}
+
+message TeamInfo {
+    string team_id = 1;
+    repeated string members = 2;  // members ids
+}
+
+message CombatInfo {
+    string combat_id = 1;
+    NumericAttr combat_numeric = 2;  // 战斗态
+    int32 turn_time_left = 3;  // 当前行动条还剩余多少时间
 }
 
 message LearnedSkill {
@@ -51,8 +64,7 @@ message MoreInfo {
 
 message PlayerAttr {
     ActorAttr basic_attr = 1;
-    NumericAttr numeric_attr = 2;
-    int32 level = 3;
+    NumericAttr numeric_attr = 2;  // 常态
     int32 exp = 4;
     int32 gold = 14;
     int32 skill_points = 15;  // 技能点
@@ -62,6 +74,7 @@ message PlayerAttr {
     repeated string finished_tasks = 19;  // 已完成任务
     repeated string knew_npcids = 20;  // 已经知道的npc，这将影响界面显示
     string owned_team_id = 21;  // 所属队伍ID
+    CombatInfo combat_info = 23;
     repeated MoreInfo more_info = 22;  // 其他信息，包括战斗、任务获得，主要用于文本展示
 }
 
@@ -71,6 +84,7 @@ message NPCAttr {
     int32 level = 3;
     repeated LearnedSkill learned_skills = 4;  // 已学技能
     repeated string order_moves = 5;  // 出招顺序
+    CombatInfo combat_info = 23;
     // 仅用于客户端，因为服务端都是有独立的组件完成各自功能；
     repeated string owned_tasks = 6;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
     repeated string owned_functions = 7;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
@@ -97,11 +111,11 @@ message SkillAttr {
     // 技能节点
     string skill_id = 1;  // 以巫术为例：SWxxx
     string skill_name = 2;
+    string skill_desc = 6;  // description
     int32 max_skill_level = 3;
     // int32 curr_skill_level = 4;
     SkillType skill_type = 5;
-    string skill_desc = 6;  // description
-    SkillType damage_type = 7;  // damage type, such as physical and magical
+    DamageType damage_type = 7;  // damage type, such as physical and magical
     repeated string damage = 8;  // damage value
     int32 duration = 9;  // skill state duration
     repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
@@ -162,14 +176,21 @@ message TaskAttr {
     string assigned_npcid = 9;  // a task is only associated with a npc, but a npc may has many tasks.
 }
 
-message Combat {
-    // 战斗操作
-    string attacker_id = 1;
-    string target_id = 2;
-    string operation = 3;  // 具体操作：如技能、普通攻击
-    int32 damage = 4;  // 实际造成伤害
-    bool dodge = 6;  // 是否闪避
-    bool is_dead = 7;  // 是否死亡
+enum CombatState {
+    STANDBY = 0;
+    RUNNING = 1;
+    FINISHED = 2;
+    STOP = 3;
+}
+
+enum CombatActionType {
+    NORMAL = 0;
+    SKILL = 1;
+}
+
+message CombatAction {
+    CombatActionType action_type = 1;
+    string skill_id = 2;
 }
 
 // message Achievement {
