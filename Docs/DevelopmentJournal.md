@@ -201,9 +201,31 @@
 ```
 2. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；
 
-## 2023.04.23
+## 2023.04.24
 ### 已完成事务：
 1. 完成combat、combat manager框架开发，但功能还不完全，比如技能的伤害类型还没填充完毕，还有奖励的分发还没写，这些打算在联调的时候再写；
+### 目标事务
+1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；
+2. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api，还需要做 LOGIN GATE 和 GAME GATE；
+3. 服务器选择：高防？可用于防止DDos攻击；代理与反向代理；
+4. 客户端UI样式：是否可参考基于WinUI3的fluent widgets?直接用可能涉及商用。
+### 存在问题
+#### server
+1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+2. 关于world类里的各种dict，如players、sessions等，需要引入multiprocessing等类似数据结构，主要是为了高并发处理。
+#### client
+1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序关闭，后续可跟进。
+#### database
+1. 数据库的更新一般选择在游戏世界tick的时候；但当有需要数据库操作时，应该利用database helper更新database order commit，在每周期后统一更新数据库。这是后续开发方向，由于暂未配置数据库，先用统一注释备注
+```python
+# use database helper to commit the update
+```
+2. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；
+
+## 2023.04.25
+### 已完成事务：
+1. 完成combat组件关于npc战斗逻辑、以及施法对象的合法性判断、战斗技能效果的扩充开发，基本确定战斗组件，但战斗奖励以及tasks对战斗任务的判断仍还没写；
+2. 修复了一些因为改变从属关系而导致的错误；
 ### 目标事务
 1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；
 2. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api，还需要做 LOGIN GATE 和 GAME GATE；
