@@ -75,3 +75,16 @@ class SkillsHelper:
             return self.____standard_skills____[skill_id]
         except:
             return None
+    
+    def find_curr_damage(self, skill_id, curr_level):
+        if curr_level <= 0:
+            return
+        
+        damage_str = self.____standard_skills____[skill_id].damage[curr_level - 1]
+        
+        if '%' in damage_str:
+            damage = int(damage_str[: -1]) * 0.01
+        else:
+            damage = int(damage_str)
+        
+        return damage

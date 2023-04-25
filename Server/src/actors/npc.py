@@ -44,9 +44,6 @@ class NPC(Actor):
         
         self.skills = Skills(self)
         self.add_component("skills", self.skills)
-    
-    def load_proto(self):
-        pass
 
 
 if __name__ == "__main__":

@@ -32,12 +32,19 @@ class Bag(Component):
         
         self.____items____ = {}
     
-    def tick(self, delta_time):
-        pass
-    
     @property
     def items(self):
         return self.____items____
+    
+    def load_proto(self, value):
+        """
+        
+        update attr from proto data.
+
+        Args:
+            value (ActorAttr): actor attr.
+        """     
+        pass
     
     def add_items(self, item_id: str, item_amount: int):
         """

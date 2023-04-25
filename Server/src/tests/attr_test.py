@@ -24,6 +24,7 @@ player_attr = PlayerAttr(
         speed = 20,
     ),
     learned_skills = [
+        LearnedSkill(skill_id = "S000", curr_skill_level = 1),
         LearnedSkill(skill_id = "W003", curr_skill_level = 1)
     ],
     exp = 2000,

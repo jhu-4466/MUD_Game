@@ -32,7 +32,17 @@ class Skills(Component):
         
         self.learned_skills = self.owner.actor_attr.learned_skills
         self.skills_helper = self.owner.world.skills_helper
+    
+    def load_proto(self, value):
+        """
         
+        update attr from proto data.
+
+        Args:
+            value (ActorAttr): actor attr.
+        """        
+        self.learned_skills = value.learned_skills
+    
     def learn_skill(self, target_id: str):
         """
 
@@ -168,7 +178,7 @@ class Skills(Component):
         
         return True
     
-    def find_a_skill(self, target_id):
+    def find_the_skill_level(self, target_id):
         """
         
         find the curr level of the skill
@@ -176,9 +186,7 @@ class Skills(Component):
         Args:
             target_id: target skill id.
         """
-        print(target_id)
         for skill in self.learned_skills:
-            print(skill.skill_id)
             if skill.skill_id == target_id:
                 return skill.curr_skill_level
         

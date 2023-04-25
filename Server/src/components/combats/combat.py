@@ -8,14 +8,17 @@
 # History:
 #       <autohr>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/24      basic build
+#         m14           v0.5        2023/04/25      completed build
 # -----------------------------
 
 
 from core.component.component import Component
 
-from utils.proto.se_world_pb2 import CombatState, NumericAttr, CombatActionType, DamageType, CombatAction, CombatInfo
-from google.protobuf.json_format import ParseDict
-import json
+from utils.proto.se_world_pb2 import (
+    CombatState, NumericAttr, DamageType, CombatInfo, 
+    BuffSituation, BuffType)
+
+import time
 
 
 class Combat(Component):
@@ -29,9 +32,11 @@ class Combat(Component):
     def __init__(self, owner, combat_id, combat_reward, team_a_id, team_b_id):
         super().__init__(owner)
         
+        self.skills_helper = self.owner.owner.skills_helper
+        
         self.initialize(combat_id, combat_reward, team_a_id, team_b_id)
 
-    def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, max_turn_time=100):
+    def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, max_turn_time=30):
         """
         
         Initiates a combat between the specified members.
@@ -45,6 +50,8 @@ class Combat(Component):
         self.combat_reward = combat_reward
         
         self.max_turn_time = max_turn_time
+        self.last_buff_time = time.time()
+        self.update_buff_flags = False
         
         self.actions = []
         self.members = {}
@@ -94,8 +101,8 @@ class Combat(Component):
         Returns:
             member_attr: a ActorAttr message.
         """
-        # It needs to be loaded with more things, like passive skills influence
         member = self.owner.owner.players[member_id]
+        # It needs to be loaded with more things, like passive skills influence
         combat_numeric = NumericAttr()
         combat_numeric.CopyFrom(member.actor_attr.numeric_attr)
         combat_info = CombatInfo()
@@ -110,6 +117,7 @@ class Combat(Component):
 
     def tick(self, delta_time: int):
         """
+        
         Updates the combat state.
 
         Args:
@@ -120,14 +128,35 @@ class Combat(Component):
                 self.prompt_member_action(self.curr_member_id)
             return
 
+        curr_time = time.time()
+        if curr_time - self.last_buff_time >= 1:
+                self.last_buff_time = curr_time
+                self.update_buff_flags = True
         for member in self.members.values():
+            if self.update_buff_flags:
+                self._update_buff_situations(member)
             if self.combat_state == CombatState.RUNNING:
                 member.actor_attr.combat_info.turn_time_left -= \
-                    int(delta_time * member.actor_attr.combat_info.combat_numeric.speed)
+                    delta_time * member.actor_attr.combat_info.combat_numeric.speed
                 if member.actor_attr.combat_info.turn_time_left <= 0:
                     self.combat_state = CombatState.STOP
                     self.curr_member_id = member.actor_attr.basic_attr.actor_id
                     self.prompt_member_action(self.curr_member_id)
+        self.update_buff_flags = False
+
+    def _update_buff_situations(self, target):
+        """
+        
+        Updates target buffs state.
+
+        Args:
+            target (ActorAttr): calculate all buffs in a target.
+        """
+        for buff in target.actor_attr.combat_info.buff_situations:
+            self._calculate_buff_damage(target, buff)
+            buff.remain_time -= 1
+            if buff.remain_time <= 0:
+                target.actor_attr.combat_info.buff_situations.remove(buff)
 
     def prompt_member_action(self, member_id):
         """
@@ -140,7 +169,6 @@ class Combat(Component):
             return
         
         member_id, target_id, action = input(f"please {member_id} input your action: ").split(' ')
-        action = ParseDict(json.loads(action), CombatAction())
         
         self.apply_action(member_id, target_id, action)
 
@@ -160,10 +188,9 @@ class Combat(Component):
         if member.actor_attr.combat_info.turn_time_left > 0:
             return
         
-        if action.action_type == CombatActionType.NORMAL:
-            self._apply_normal_action(member, target)
-        elif action.action_type == CombatActionType.SKILL:
-            self._apply_skill_action(member, target, action)
+        # all actions as skills
+        self._apply_action(member, target, action)
+        
         self.curr_member_id = None
         member.actor_attr.combat_info.turn_time_left = self.max_turn_time
         
@@ -172,47 +199,93 @@ class Combat(Component):
 
         self.check_combat_state()
     
-    def _apply_normal_action(self, member, target):
+    def _apply_action(self, member, target, action):
         """
         
-        normal action
+        skill action
 
         Args:
             member (ActorAttr): the attr of the member applying the action.
             target (ActorAttr): the attr of the target.
-        """        
-        target.actor_attr.combat_info.combat_numeric.hp -= \
-            member.actor_attr.combat_info.combat_numeric.physical_damage
-    
-    def _apply_skill_action(self, member, target, action):
-        """
-        
-        normal action
-
-        Args:
-            member (ActorAttr): the attr of the member applying the action.
-            target (ActorAttr): the attr of the target.
+            action (CombatAction): the action to apply.
         """      
-        skill = self.owner.owner.skills_helper.find_a_skill(action.skill_id)
-        skill_level = member.skills.find_a_skill(action.skill_id)
-        print(member.actor_attr)
-        print(member.skills)
+        skill = self.skills_helper.find_a_skill(action)
+        skill_level = member.skills.find_the_skill_level(action)
         if not skill_level:
             return
+        damage = self.skills_helper.find_curr_damage(action, skill_level)
         
         # it needs more operations
         if skill.damage_type == DamageType.PHYSICAL:
-            target.actor_attr.combat_info.combat_numeric.hp -= \
-                skill.damage[skill_level - 1] * member.actor_attr.combat_info.combat_numeric.physical_damage
+            self._apply_physical_skill(member, target, damage)
         elif skill.damage_type == DamageType.MAGICAL:
-            target.actor_attr.combat_info.combat_numeric.hp -= \
-                skill.damage[skill_level - 1] * member.actor_attr.combat_info.combat_numeric.magical_damage
+            self._apply_magical_skill(member, target, damage)
         elif skill.damage_type == DamageType.BUFF:
-            pass
-        elif skill.damage_type == DamageType.DEBUFF:
+            self._apply_buff_skill(member, target, skill, damage)
+    
+    def _apply_physical_skill(self, member, target, damage):
+        """
+        
+        apply a physical skill, including normal attack
+
+        Args:
+            member (ActorAttr): the attr of the member applying the action.
+            target (ActorAttr): the attr of the target.
+            damage (CombatAction): skill damage in one level, but not player.
+        """     
+        target.actor_attr.combat_info.combat_numeric.hp -= \
+            int(damage * member.actor_attr.combat_info.combat_numeric.physical_damage)
+    
+    def _apply_magical_skill(self, member, target, damage):
+        """
+        
+        apply a magical skill
+
+        Args:
+            member (ActorAttr): the attr of the member applying the action.
+            target (ActorAttr): the attr of the target.
+            damage (CombatAction): skill damage in one level, but not player.
+        """     
+        target.actor_attr.combat_info.combat_numeric.hp -= \
+            int(damage * member.actor_attr.combat_info.combat_numeric.magical_damage)
+    
+    def _apply_buff_skill(self, member, target, buff, damage):
+        """
+        
+        apply a buff skill, including normal attack
+
+        Args:
+            member (ActorAttr): the attr of the member applying the action.
+            target (ActorAttr): the attr of the target.
+            buff (SkillAttr): a buff skill
+            damage (CombatAction): skill damage in one level, but not player.
+        """ 
+        buff_situation = BuffSituation()
+        buff_situation.buff_type = buff.buff_type
+        buff_situation.remain_time = buff.duration
+        buff_situation.damage = int(
+            damage * member.actor_attr.combat_info.combat_numeric.magical_damage)
+
+        target.actor_attr.combat_info.buff_situations.append(buff_situation)
+        self._calculate_buff_damage(target, buff_situation)
+    
+    def _calculate_buff_damage(self, target, buff):
+        """
+        
+        calculate buff damage
+
+        Args:
+            target (ActorAttr): the attr of the target.
+            buff (BuffSituation): a buff on target
+        """ 
+        if buff.buff_type == BuffType.TREATMENT:
+            target.actor_attr.combat_info.combat_numeric.hp += buff.damage
+        elif buff.buff_type == BuffType.HAEMORRHAGE:
+            target.actor_attr.combat_info.combat_numeric.hp -= buff.damage
+        else:
             pass
             
-        print(target.actor_attr.combat_info.combat_numeric.hp)
+        self.check_combat_state()
     
     def check_combat_state(self):
         """
@@ -235,6 +308,7 @@ class Combat(Component):
         save reward in the server directly, just add a other_info attr to client.
         
         """
+        print(self.combat_winner)
         team = self.owner.owner.team_manager.find_a_team(self.combat_winner)
         
         for member_id in team.members:

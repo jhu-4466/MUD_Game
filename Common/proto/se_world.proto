@@ -43,19 +43,22 @@ message TeamInfo {
 
 enum BuffType {
     // including all BUFF and DEBUFF
-    TREATMENT = 0;   // 治疗
+    // 禁锢等也做进来
+    TREATMENT = 0;   // 回血
+    HAEMORRHAGE = 1;  // 出血
 }
 
-message BuffDuration {
+message BuffSituation {
     BuffType buff_type = 1;
     int32 remain_time = 2;
+    int32 damage = 3;
 }
 
 message CombatInfo {
     string combat_id = 1;
     NumericAttr combat_numeric = 2;  // 战斗态
-    int32 turn_time_left = 3;  // 当前行动条还剩余多少时间
-    repeated BuffDuration buff_duration = 4;
+    float turn_time_left = 3;  // 当前行动条还剩余多少时间
+    repeated BuffSituation buff_situations = 4;  // 角色身上正携带的buff信息
 }
 
 message LearnedSkill {
@@ -115,17 +118,16 @@ enum DamageType {
     PHYSICAL = 0;
     MAGICAL = 1;
     BUFF = 2;
-    DEBUFF = 3;
 }
 
 message SkillAttr {
     // 技能节点
     string skill_id = 1;  // 以巫术为例：SWxxx
     string skill_name = 2;
-    string skill_desc = 6;  // description
-    int32 max_skill_level = 3;
-    // int32 curr_skill_level = 4;
+    string skill_desc = 3;  // description
+    int32 max_skill_level = 4;
     SkillType skill_type = 5;
+    BuffType buff_type = 6;  // not only buff but also debuff
     DamageType damage_type = 7;  // damage type, such as physical and magical
     repeated string damage = 8;  // damage value
     int32 duration = 9;  // skill state duration, a seconds int.
@@ -192,16 +194,6 @@ enum CombatState {
     RUNNING = 1;
     FINISHED = 2;
     STOP = 3;
-}
-
-enum CombatActionType {
-    NORMAL = 0;
-    SKILL = 1;
-}
-
-message CombatAction {
-    CombatActionType action_type = 1;
-    string skill_id = 2;
 }
 
 // message Achievement {

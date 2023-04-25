@@ -73,7 +73,7 @@ class SEWorld(metaclass=SingletonType):
         while True:
             # reload_helper.refresh()
             
-            self.combat_manager.tick(1)
+            self.combat_manager.tick(1 / 30)
     
     def on_close(self):
         self.sessions = {}
@@ -135,18 +135,15 @@ if __name__ == "__main__":
     npc = world.players[npc_attr.basic_attr.actor_id]
     player.actor_attr = player_attr
     npc.actor_attr = npc_attr
-
-    print(player.skills.learned_skills)
-
-    # world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
-
-    # try:   
-    #     world.tick()
-    # except KeyboardInterrupt:
-    #     sys.exit()
-    # world.team_manager.remove_a_team(a)
-    # world.team_manager.remove_a_team(b)
     
-    # print(player.actor_attr)
-    # print(npc.actor_attr)
+    # it need to update component attr, pay attention!
+    player.skills = player_attr
+    npc.skills = npc_attr
+
+    world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
+
+    try:   
+        world.tick()
+    except KeyboardInterrupt:
+        sys.exit()
     

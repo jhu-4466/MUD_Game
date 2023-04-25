@@ -36,6 +36,16 @@ class Tasks(Component):
         self.running_tasks = self.owner.actor_attr.running_tasks
         self.finished_tasks = self.owner.actor_attr.finished_tasks
 
+    def load_proto(self, value):
+        """
+        
+        update attr from proto data.
+
+        Args:
+            value (ActorAttr): actor attr.
+        """     
+        pass
+
     def tick(self, delta_time=None):
         """
         
