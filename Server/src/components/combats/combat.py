@@ -32,9 +32,13 @@ class Combat(Component):
     def __init__(self, owner, combat_id, combat_reward, team_a_id, team_b_id):
         super().__init__(owner)
         
-        self.skills_helper = self.owner.owner.skills_helper
+        self.____world____ = self.owner.owner
         
         self.initialize(combat_id, combat_reward, team_a_id, team_b_id)
+
+    @property
+    def world(self):
+        return self.____world____
 
     def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, max_turn_time=30):
         """
@@ -81,7 +85,7 @@ class Combat(Component):
         """
         members = {}
         
-        team = self.owner.owner.team_manager.find_a_team(team_id)
+        team = self.____world____.team_manager.find_a_team(team_id)
         for member_id in team.members:
             member = self._get_player_state(member_id)
             members[member_id] = member
@@ -101,7 +105,7 @@ class Combat(Component):
         Returns:
             member_attr: a ActorAttr message.
         """
-        member = self.owner.owner.players[member_id]
+        member = self.____world____.players[member_id]
         # It needs to be loaded with more things, like passive skills influence
         combat_numeric = NumericAttr()
         combat_numeric.CopyFrom(member.actor_attr.numeric_attr)
@@ -209,11 +213,11 @@ class Combat(Component):
             target (ActorAttr): the attr of the target.
             action (CombatAction): the action to apply.
         """      
-        skill = self.skills_helper.find_a_skill(action)
+        skill = self.____world____.skills_helper.find_a_skill(action)
         skill_level = member.skills.find_the_skill_level(action)
         if not skill_level:
             return
-        damage = self.skills_helper.find_curr_damage(action, skill_level)
+        damage = self.____world____.skills_helper.find_curr_damage(action, skill_level)
         
         # it needs more operations
         if skill.damage_type == DamageType.PHYSICAL:
@@ -309,7 +313,7 @@ class Combat(Component):
         
         """
         print(self.combat_winner)
-        team = self.owner.owner.team_manager.find_a_team(self.combat_winner)
+        team = self.____world____.team_manager.find_a_team(self.combat_winner)
         
         for member_id in team.members:
             pass
