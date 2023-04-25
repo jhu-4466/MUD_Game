@@ -190,10 +190,12 @@ class Combat(Component):
         member = self.members[member_id]
         target = self.members[target_id]
         if member.actor_attr.combat_info.turn_time_left > 0:
+            # here return a wrong message
             return
         
         # all actions as skills
-        self._apply_action(member, target, action)
+        if not self._apply_action(member, target, action):
+            return
         
         self.curr_member_id = None
         member.actor_attr.combat_info.turn_time_left = self.max_turn_time
@@ -226,6 +228,8 @@ class Combat(Component):
             self._apply_magical_skill(member, target, damage)
         elif skill.damage_type == DamageType.BUFF:
             self._apply_buff_skill(member, target, skill, damage)
+        
+        return True
     
     def _apply_physical_skill(self, member, target, damage):
         """
