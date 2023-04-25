@@ -49,7 +49,11 @@ class TeamManager(Component):
         team_id = "TEAM" + \
             date_time.strftime("%Y%m%d%H%M%S") + actor_id
         
-        self.teams[team_id] = Team(team_id, self.owner.players[actor_id])
+        if "NPC" in actor_id:
+            captain = self.owner.npcs[actor_id]
+        else:
+            captain = self.owner.players[actor_id]
+        self.teams[team_id] = Team(team_id, captain)
         
         return team_id
     

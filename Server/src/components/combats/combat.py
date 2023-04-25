@@ -15,8 +15,8 @@
 from core.component.component import Component
 
 from utils.proto.se_world_pb2 import (
-    CombatState, NumericAttr, DamageType, CombatInfo, 
-    BuffSituation, BuffType)
+    CombatState, NumericAttr, DamageType, CombatInfo, ActorType,
+    BuffSituation, BuffType, ChoiceStandard, ChoiceLevel)
 
 import time
 
@@ -105,7 +105,10 @@ class Combat(Component):
         Returns:
             member_attr: a ActorAttr message.
         """
-        member = self.____world____.players[member_id]
+        if "NPC" in member_id:
+            member = self.____world____.npcs[member_id]
+        else:
+            member = self.____world____.players[member_id]
         # It needs to be loaded with more things, like passive skills influence
         combat_numeric = NumericAttr()
         combat_numeric.CopyFrom(member.actor_attr.numeric_attr)
@@ -164,6 +167,7 @@ class Combat(Component):
 
     def prompt_member_action(self, member_id):
         """
+        
         Prompts the specified player to select an action.
 
         Args:
@@ -172,11 +176,91 @@ class Combat(Component):
         if self.combat_state == CombatState.FINISHED:
             return
         
-        member_id, target_id, action = input(f"please {member_id} input your action: ").split(' ')
-        
-        self.apply_action(member_id, target_id, action)
+        if "NPC" in member_id:
+            self.apply_npc_action(member_id)
+        else:
+            # it just is for testing, it need to be changed in the future.
+            member_id, target_id, action = input(f"please {member_id} input your action: ").split(' ')
+            self.apply_player_action(member_id, target_id, action)
 
-    def apply_action(self, member_id, target_id, action):
+    def apply_npc_action(self, member_id):
+        """
+        
+        Applies the specified action to the specified npcer.
+
+        Args:
+            member_id (str): the ID of the member applying the action.
+        """
+        if member_id != self.curr_member_id:
+            return
+        
+        member = self.members[member_id]
+        order = member.actor_attr.combat_orders[member.actor_attr.combat_order_index]
+        target = self._judge_npc_target(order)
+        
+        if not self._apply_action(member, target, order.action_id):
+            return
+        self._action_finished(member, target)
+
+    def _judge_npc_target(self, order):
+        """
+        
+        judge target for npc
+
+        Args:
+            order (NPCCombatOrder): npc combat order
+        """
+        choice_standard = order.choice_standard
+        choice_level = order.choice_standard
+        choice_team = order.choice_team
+        
+        target = None
+        for member in self.members.values():
+            if member.actor_attr.basic_attr.actor_type != choice_team:
+                continue
+            if not target:
+                target = member
+                continue
+            
+            target = self._judge_npc_target_by_rules(
+                target.actor_attr.combat_info.combat_numeric, 
+                member.actor_attr.combat_info.combat_numeric, 
+                choice_standard, choice_level)
+
+        return target
+
+    def _judge_npc_target_by_rules(self, target, member, standard, level):
+        """
+        
+        judge npc target by order rules
+
+        Args:
+            target (CombatNumeric): curr_target combat numeric
+            member (CombatNumeric): a new member
+            standard (ChoiceStandard): target choice standard
+            level (ChoiceLevel): target choice level
+        Returns:
+            _type_: _description_
+        """
+        choicestandard_map = {
+            ChoiceStandard.SPEED: 'speed',
+            ChoiceStandard.PHYSICALDEFENCE: 'physical_defence',
+            ChoiceStandard.MAGICALDEFENCE: 'magical_defence',
+            ChoiceStandard.HP: 'hp',
+            ChoiceStandard.MP: 'mp',
+        }
+        
+        standard_attr = choicestandard_map.get(standard)
+        if standard_attr:
+            target_value = getattr(target, standard_attr)
+            member_value = getattr(member, standard_attr)
+
+            if level == ChoiceLevel.HIGHEST and target_value < member_value:
+                return member
+            elif level == ChoiceLevel.LOWEST and target_value > member_value:
+                return member
+
+    def apply_player_action(self, member_id, target_id, action):
         """
         Applies the specified action to the specified player.
 
@@ -196,14 +280,7 @@ class Combat(Component):
         # all actions as skills
         if not self._apply_action(member, target, action):
             return
-        
-        self.curr_member_id = None
-        member.actor_attr.combat_info.turn_time_left = self.max_turn_time
-        
-        if target.actor_attr.combat_info.combat_numeric.hp <= 0:
-            self.members_state[target.actor_attr.owned_team_id] -= 1
-
-        self.check_combat_state()
+        self._action_finished(member, target)
     
     def _apply_action(self, member, target, action):
         """
@@ -214,8 +291,10 @@ class Combat(Component):
             member (ActorAttr): the attr of the member applying the action.
             target (ActorAttr): the attr of the target.
             action (CombatAction): the action to apply.
-        """      
+        """  
         skill = self.____world____.skills_helper.find_a_skill(action)
+        if not self._judge_target_by_skill_rules(member, target, skill):
+            return
         skill_level = member.skills.find_the_skill_level(action)
         if not skill_level:
             return
@@ -228,6 +307,35 @@ class Combat(Component):
             self._apply_magical_skill(member, target, damage)
         elif skill.damage_type == DamageType.BUFF:
             self._apply_buff_skill(member, target, skill, damage)
+        elif skill.damage_type == DamageType.DEBUFF:
+            self._apply_buff_skill(member, target, skill, damage)
+        
+        return True
+    
+    def _judge_target_by_skill_rules(self, member, choice, skill):
+        """
+        
+        make sure the skill can be effect depends on target team.
+
+        Args:
+            member (ActorAttr): member's attr
+            choice (ActorAttr): choice's from member attr
+            skill (SkillAttr): skill attr
+        Returns:
+            bool: if skill can not influent target team returns False, otherwise returns True
+        """
+        member_type = member.actor_attr.basic_attr.actor_type
+        choice_type = choice.actor_attr.basic_attr.actor_type
+        targetteam_map = {
+            DamageType.PHYSICAL: ActorType.NPC if member_type == ActorType.PLAYER else ActorType.PLAYER,
+            DamageType.MAGICAL: ActorType.NPC if member_type == ActorType.PLAYER else ActorType.PLAYER,
+            DamageType.BUFF: ActorType.PLAYER if member_type == ActorType.PLAYER else ActorType.NPC,
+            DamageType.DEBUFF: ActorType.NPC if member_type == ActorType.PLAYER else ActorType.PLAYER,
+        }
+        
+        target_team = targetteam_map.get(skill.damage_type)
+        if choice_type != target_team:
+            return False
         
         return True
     
@@ -261,14 +369,20 @@ class Combat(Component):
         """
         
         apply a buff skill, including normal attack
+        the same buff skill can not add again
 
         Args:
             member (ActorAttr): the attr of the member applying the action.
             target (ActorAttr): the attr of the target.
             buff (SkillAttr): a buff skill
             damage (CombatAction): skill damage in one level, but not player.
-        """ 
+        """
+        for _ in target.actor_attr.combat_info.buff_situations:
+            if _.skill_id == buff.skill_id:
+                return
+        
         buff_situation = BuffSituation()
+        buff_situation.skill_id = buff.skill_id
         buff_situation.buff_type = buff.buff_type
         buff_situation.remain_time = buff.duration
         buff_situation.damage = int(
@@ -292,7 +406,14 @@ class Combat(Component):
             target.actor_attr.combat_info.combat_numeric.hp -= buff.damage
         else:
             pass
-            
+        
+        self.check_combat_state()
+    
+    def _action_finished(self, member, target):
+        if target.actor_attr.combat_info.combat_numeric.hp <= 0:
+            self.members_state[target.actor_attr.owned_team_id] -= 1
+        self.curr_member_id = None
+        member.actor_attr.combat_info.turn_time_left = self.max_turn_time
         self.check_combat_state()
     
     def check_combat_state(self):

@@ -9,6 +9,8 @@
 #       <autohr>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/21      basic build
 # -----------------------------
+import sys
+sys.path.append("../")
 
 
 from core.component.component import Component
@@ -61,7 +63,7 @@ class Tasks(Component):
             task_state = False
             for tt in task_attr.trigger_conditions:
                 if tt.tc_type == TaskTriggerConditionsType.LEVEL and \
-                    self.owner.actor_attr.level >= int(tt.tc_content):
+                    self.owner.actor_attr.numeric_attr.level >= int(tt.tc_content):
                     task_state = True
                     continue
                 elif tt.tc_type == TaskTriggerConditionsType.PRETASK and \
@@ -224,21 +226,26 @@ if __name__ == "__main__":
     from components.bag import Bag
     from components.skills import Skills
     from utils.helpers.skills_helper import SkillsHelper
+    from core.world.se_world import SEWorld
+    from core.actor.actor import Actor
     
-    class Player:
-        def __init__(self):
+    class Player(Actor):
+        def __init__(self, owner):
+            super().__init__(owner)
+            
             self.actor_attr = PlayerAttr()
             
             self.actor_attr.basic_attr.actor_id = "P001"
-            self.actor_attr.level = 0
+            self.actor_attr.numeric_attr.level = 0
             self.actor_attr.knew_npcids.append("NPC001")
             
             self.bag = Bag(self)
             self.tasks = Tasks(self)
             self.skills = Skills(self)
-            self.skills.skill_helper = SkillsHelper("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")
     
-    player = Player()
+    player = Player(SEWorld(
+        skill_file="F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
+        task_file="F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json"))
     player.tasks.tick()
     
     curr_task_id = ""

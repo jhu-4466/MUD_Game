@@ -9,10 +9,10 @@
 
 from utils.proto.se_world_pb2 import (
     PlayerAttr, ActorAttr, ActorType, NPCAttr, NumericAttr,
-    LearnedSkill)
+    LearnedSkill, NPCCombatOrder, ChoiceStandard, ChoiceLevel, ChoiceTeam)
 
 player_attr = PlayerAttr(
-    basic_attr = ActorAttr(actor_id='P000001', actor_name='取个名字好难', actor_type=ActorType.PLAYER),
+    basic_attr = ActorAttr(actor_id='PLAYER000001', actor_name='取个名字好难', actor_type=ActorType.PLAYER),
     numeric_attr = NumericAttr(
         level = 10,
         hp = 200,
@@ -46,7 +46,11 @@ npc_attr = NPCAttr(
         speed = 10,
     ),
     learned_skills = [
+        LearnedSkill(skill_id = "S000", curr_skill_level = 1),
         LearnedSkill(skill_id = "W003", curr_skill_level = 1)
     ],
-    order_moves = ["attack", "W004"]
+    combat_orders = [
+        NPCCombatOrder(action_id = "S000", choice_standard = ChoiceStandard.SPEED, choice_level = ChoiceLevel.HIGHEST, choice_team = ActorType.PLAYER),
+        NPCCombatOrder(action_id = "W003", choice_standard = ChoiceStandard.HP, choice_level = ChoiceLevel.HIGHEST, choice_team = ActorType.PLAYER)
+    ]
 )

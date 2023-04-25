@@ -46,7 +46,7 @@
             "max_skill_level": 10,
             "skill_type": 0,
             "skill_desc": "给敌方任一单位在一定时间内加持中毒状态",
-            "damage_type": 2,
+            "damage_type": 3,
             "buff_type": 1,
             "damage": ["10%"],
             "duration": 3,

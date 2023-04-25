@@ -26,7 +26,8 @@ class TasksHelper:
         file_path: tasks data file.
         ____standard_tasks____: standard all tasks.
     """
-    def __init__(self, file_path: str):
+    def __init__(self, owner, file_path: str):
+        self.owner = owner
         self.file_path = file_path
         
         self.initialize()

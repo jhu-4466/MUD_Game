@@ -19,6 +19,7 @@ from core.session.se_session import SESession
 from components.teams.team_manager import TeamManager
 from components.combats.combat_manager import CombatManager
 from utils.helpers.skills_helper import SkillsHelper
+from utils.helpers.tasks_helper import TasksHelper
 
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
@@ -34,8 +35,9 @@ class SEWorld(metaclass=SingletonType):
     Args:
         sessions: tornado connection
     """
-    def __init__(self, skill_file):
+    def __init__(self, skill_file, task_file):
         self.skill_file = skill_file
+        self.task_file = task_file
         
         self.initialize()
     
@@ -44,6 +46,7 @@ class SEWorld(metaclass=SingletonType):
         # self.players = self.process_manager.dict()
         # self.sessions = self.process_manager.dict()
         self.players = {}
+        self.npcs = {}
         self.sessions = {}
         
         self.skilltree_helper = None
@@ -55,6 +58,7 @@ class SEWorld(metaclass=SingletonType):
     def on_initialize(self):
         reload_helper.setup()
         
+        self.tasks_helper = TasksHelper(self, self.task_file)
         self.skills_helper = SkillsHelper(self, self.skill_file)
         
         self.team_manager = TeamManager(self)
@@ -128,11 +132,13 @@ if __name__ == "__main__":
     from actors.player import Player
     from actors.npc import NPC
     
-    world = SEWorld("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")
+    world = SEWorld(
+        skill_file="F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
+        task_file="F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json")
     world.players[player_attr.basic_attr.actor_id] = Player(world)
-    world.players[npc_attr.basic_attr.actor_id] = NPC(world)
+    world.npcs[npc_attr.basic_attr.actor_id] = NPC(world)
     player = world.players[player_attr.basic_attr.actor_id]
-    npc = world.players[npc_attr.basic_attr.actor_id]
+    npc = world.npcs[npc_attr.basic_attr.actor_id]
     player.actor_attr = player_attr
     npc.actor_attr = npc_attr
     

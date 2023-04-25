@@ -50,8 +50,9 @@ enum BuffType {
 
 message BuffSituation {
     BuffType buff_type = 1;
-    int32 remain_time = 2;
-    int32 damage = 3;
+    string skill_id = 2;
+    int32 remain_time = 3;
+    int32 damage = 4;
 }
 
 message CombatInfo {
@@ -92,17 +93,40 @@ message PlayerAttr {
     repeated MoreInfo more_info = 22;  // 其他信息，包括战斗、任务获得，主要用于文本展示
 }
 
+enum ChoiceStandard {
+    // 选择标准
+    SPEED = 0;  // 速度
+    PHYSICALDEFENCE = 1;  // 物理防御
+    MAGICALDEFENCE = 2;   // 法术防御
+    HP = 3;
+    MP = 4;
+}
+
+enum ChoiceLevel {
+    // 选择极限
+    HIGHEST = 0;
+    LOWEST = 1;
+}
+
+message NPCCombatOrder {
+    string action_id = 1;
+    ChoiceStandard choice_standard = 2;  // 选择目标的标准
+    ChoiceLevel choice_level = 3;
+    ActorType choice_team = 4;
+}
+
 message NPCAttr {
     ActorAttr basic_attr = 1;
     NumericAttr numeric_attr = 2;
     int32 level = 3;
     repeated LearnedSkill learned_skills = 4;  // 已学技能
-    repeated string order_moves = 5;  // 出招顺序
-    CombatInfo combat_info = 23;
+    repeated NPCCombatOrder combat_orders = 5;  // 出招顺序
+    int32 combat_order_index = 6;
+    CombatInfo combat_info = 7;
     // 仅用于客户端，因为服务端都是有独立的组件完成各自功能；
-    repeated string owned_tasks = 6;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
-    repeated string owned_functions = 7;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
-    string owned_team_id = 8;
+    repeated string owned_tasks = 8;  // 所属任务，保存ids，用于检索当前player可接任务，供对应窗口、按钮显示
+    repeated string owned_functions = 9;  // 所属其他功能，可能涉及：买卖系统物品、点技能等；
+    string owned_team_id = 10;
 }
 
 enum SkillType {
@@ -118,6 +142,7 @@ enum DamageType {
     PHYSICAL = 0;
     MAGICAL = 1;
     BUFF = 2;
+    DEBUFF = 3;
 }
 
 message SkillAttr {
@@ -161,7 +186,7 @@ enum TaskTargetType {
 message TaskTarget {
     TaskTargetType tt_type = 1; // 任务目标
     string tt_content = 2;
-    int32 tt_counts = 3;  // 如果是item，将需要明确数量
+    int32 tt_amount = 3;  // 如果是item，将需要明确数量
 }
 
 enum TaskRewardType {
@@ -169,7 +194,7 @@ enum TaskRewardType {
     EXP = 1;  // 经验
     GOLD = 2;  // 金币
     ITEMS = 3;  // 物品
-    NPCS = 4;  // 完成某些任务时，可能会触发新的NPC
+    NEWNPC = 4;  // 完成某些任务时，可能会触发新的NPC
 }
 
 message TaskReward {
