@@ -16,7 +16,7 @@ from core.component.component import Component
 
 from utils.proto.se_world_pb2 import (
     CombatState, NumericAttr, DamageType, CombatInfo, ActorType,
-    BuffSituation, BuffType, ChoiceStandard, ChoiceLevel)
+    BuffSituation, BuffType, ChoiceStandard, ChoiceLevel, TaskCombatState)
 
 import time
 
@@ -29,18 +29,18 @@ class Combat(Component):
     """
     component_name: str = "Combat"
 
-    def __init__(self, owner, combat_id, combat_reward, team_a_id, team_b_id):
+    def __init__(self, owner, combat_id, combat_reward, team_a_id, team_b_id, running_task=None):
         super().__init__(owner)
         
         self.____world____ = self.owner.owner
         
-        self.initialize(combat_id, combat_reward, team_a_id, team_b_id)
+        self.initialize(combat_id, combat_reward, team_a_id, team_b_id, running_task)
 
     @property
     def world(self):
         return self.____world____
 
-    def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, max_turn_time=30):
+    def initialize(self, combat_id, combat_reward, team_a_id, team_b_id, running_task=None, max_turn_time=30):
         """
         
         Initiates a combat between the specified members.
@@ -52,6 +52,7 @@ class Combat(Component):
         self.combat_state = CombatState.STANDBY
         self.combat_winner = None
         self.combat_reward = combat_reward
+        self.combat_task = running_task
         
         self.max_turn_time = max_turn_time
         self.last_buff_time = time.time()
@@ -295,7 +296,7 @@ class Combat(Component):
         skill = self.____world____.skills_helper.find_a_skill(action)
         if not self._judge_target_by_skill_rules(member, target, skill):
             return
-        skill_level = member.skills.find_the_skill_level(action)
+        skill_level = member.skills.find_a_skill_level(action)
         if not skill_level:
             return
         damage = self.____world____.skills_helper.find_curr_damage(action, skill_level)
@@ -324,6 +325,9 @@ class Combat(Component):
         Returns:
             bool: if skill can not influent target team returns False, otherwise returns True
         """
+        if not skill:
+            return False
+        
         member_type = member.actor_attr.basic_attr.actor_type
         choice_type = choice.actor_attr.basic_attr.actor_type
         targetteam_map = {
@@ -348,7 +352,7 @@ class Combat(Component):
             member (ActorAttr): the attr of the member applying the action.
             target (ActorAttr): the attr of the target.
             damage (CombatAction): skill damage in one level, but not player.
-        """     
+        """
         target.actor_attr.combat_info.combat_numeric.hp -= \
             int(damage * member.actor_attr.combat_info.combat_numeric.physical_damage)
     
@@ -407,16 +411,16 @@ class Combat(Component):
         else:
             pass
         
-        self.check_combat_state()
+        self._check_combat_state()
     
     def _action_finished(self, member, target):
         if target.actor_attr.combat_info.combat_numeric.hp <= 0:
             self.members_state[target.actor_attr.owned_team_id] -= 1
         self.curr_member_id = None
         member.actor_attr.combat_info.turn_time_left = self.max_turn_time
-        self.check_combat_state()
+        self._check_combat_state()
     
-    def check_combat_state(self):
+    def _check_combat_state(self):
         """
         
         checks combat state during every action.
@@ -426,19 +430,48 @@ class Combat(Component):
             if alive_amount == 0:
                 self.combat_winner = [team for team in self.members_state.keys() if team != team_id][0]
                 self.combat_state = CombatState.FINISHED
+                self._distribute_reward()
+                self._destroy_instance()
                 return
 
         self.combat_state = CombatState.RUNNING
     
-    def distribute_reward(self):
+    def _destroy_instance(self):
+        """
+        
+        after combat, destory the combat instance autoly.
+        
+        """
+        self._destroy_npcs()
+        self.owner.remove_a_combat(self)
+            
+    def _destroy_npcs(self):
+        """
+        
+        after combat, destory npcs in the combat.
+        
+        """
+        if self.combat_state != CombatState.FINISHED:
+            return
+        
+        for member_id, member in self.members.items():
+            if member.actor_attr.basic_attr.actor_type == ActorType.NPC:
+                npc = self.world.npcs.pop(member_id)
+                del npc
+    
+    def _distribute_reward(self):
         """
         
         after combat, distribute reward.
         save reward in the server directly, just add a other_info attr to client.
         
         """
-        print(self.combat_winner)
-        team = self.____world____.team_manager.find_a_team(self.combat_winner)
+        if 'NPC' in self.combat_winner:
+            return
         
+        print(self.combat_winner)
+        self.combat_task.combat_state = TaskCombatState.WIN
+        
+        team = self.____world____.team_manager.find_a_team(self.combat_winner)
         for member_id in team.members:
             pass

@@ -35,7 +35,7 @@ class Team(Component):
         self.on_initialize(player)
 
     def on_initialize(self, player):
-        actor_id = player.actor_attr.basic_attr.actor_id
+        actor_id = player.id
         
         self.captain = actor_id
         self.members.add(actor_id)

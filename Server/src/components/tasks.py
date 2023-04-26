@@ -16,7 +16,8 @@ sys.path.append("../")
 from core.component.component import Component
 
 from utils.proto.se_world_pb2 import (
-    TaskTriggerConditionsType, TaskTargetType, TaskRewardType, RunningTask)
+    TaskTriggerConditionsType, TaskRewardType, RunningTask,
+    TaskProcessType, TaskCombatState, TaskProcessType)
 
 
 class Tasks(Component):
@@ -96,7 +97,8 @@ class Tasks(Component):
             return False
         
         self.standby_tasks.remove(task_id)
-        running_task = RunningTask(task_id=task_id, curr_index=0)
+        running_task = RunningTask(
+            task_id=task_id, curr_index=0, assigned_npcid=npc_id, combat_state=TaskCombatState.UNKNOWN)
         self.running_tasks.append(running_task)
         
         return True
@@ -115,18 +117,87 @@ class Tasks(Component):
         running_tasks_ids = self._find_running_tasks_ids()
         if task_id not in running_tasks_ids:
             return False
-        
         running_task = self._find_a_running_task(task_id)
-        running_task_attr = self.tasks_helper.find_a_task(running_task.task_id)
-        if running_task_attr.assigned_npcid != npc_id:
+        if running_task.assigned_npcid != npc_id:
             return False
         
-        if running_task.curr_index + 1 < len(running_task_attr.task_dialogs):
-            running_task.curr_index += 1
+        running_task_attr = self.tasks_helper.find_a_task(running_task.task_id)
+        curr_task_process = running_task_attr.task_process[running_task.curr_index]
         
+        next_flag = False
+        if curr_task_process.tp_type == TaskProcessType.DIALOGS:
+            next_flag = True
+        elif curr_task_process.tp_type == TaskProcessType.COMBAT:
+            next_flag = self._check_combat_state(running_task, curr_task_process)
+        elif curr_task_process.tp_type == TaskProcessType.ITEM:
+            next_flag = self._check_material_items(curr_task_process)
+        elif curr_task_process.tp_type == TaskProcessType.SKILLS:
+            # check skills amount
+            next_flag = self._check_skills_amount(curr_task_process.tp_content)
+        elif curr_task_process.tp_type == TaskProcessType.SKILLLEVELS:
+            # check the highest skill level
+            next_flag = self._check_skill_level(curr_task_process.tp_content)
+        elif curr_task_process.tp_type == TaskProcessType.LEVELS:
+            next_flag = self._check_player_level(curr_task_process.tp_content)
+        elif curr_task_process.tp_type == TaskProcessType.FIND:
+            next_flag = self._check_knew_ids(running_task, curr_task_process.tp_content)
+        if not next_flag:
+            return False
+        
+        running_task.curr_index += 1
+        if running_task.curr_index == len(running_task_attr.task_process):
+            self._finish_a_task(task_id, npc_id)
         return True
     
-    def finish_a_task(self, task_id, npc_id):
+    def _check_combat_state(self, running_task, curr_task_process):
+        if running_task.combat_state == TaskCombatState.WIN:
+            for reward in curr_task_process.tp_reward:
+                self._distribute_a_reward(reward)
+            return True
+        else:
+            self.owner.world.add_a_combat(
+                self.owner.id, running_task.assigned_npcid, curr_task_process.npc_combatplan_index, running_task)
+        return False
+
+    def _check_material_items(self, curr_task_process):
+        bag = self.owner.bag
+        items = bag.get_items()
+        
+        for item_id, item_amount in zip(curr_task_process.tp_content, curr_task_process.items_amount):
+            if item_id not in items:
+                return False
+            if item_amount > items[item_id]:
+                return False
+            
+        for item_id, item_amount in zip(curr_task_process.tp_content, curr_task_process.items_amount):
+            bag.remove_items(item_id, item_amount)
+        for reward in curr_task_process.tp_reward:
+            self._distribute_a_reward(reward)
+
+        return True
+
+    def _check_skills_amount(self, skills_amount):
+        skills = self.owner.skills
+        
+        return len(skills.learned_skills) >= skills_amount
+    
+    def _check_skill_level(self, skill_level):
+        skills = self.owner.skills
+        
+        return skill_level <= skills.find_highest_skill_level()
+    
+    def _check_player_level(self, player_level):
+        return player_level <= self.owner.actor_attr.numeric_attr.level
+    
+    def _check_knew_ids(self, running_task, npc_id):
+        knew_ids = self.owner.actor_attr.knew_npcids
+        if npc_id not in knew_ids:
+            return False
+        
+        running_task.assigned_npcid = npc_id
+        return True
+    
+    def _finish_a_task(self, task_id, npc_id):
         """
         
         check whether finish a task.
@@ -138,51 +209,29 @@ class Tasks(Component):
             bool: whether finish successly
         """  
         task_attr = self.tasks_helper.find_a_task(task_id)
-        if npc_id not in self.owner.actor_attr.knew_npcids or \
-            npc_id != task_attr.assigned_npcid:
+        if npc_id not in self.owner.actor_attr.knew_npcids:
             return False
         
-        finish_sign = False
-        for target in task_attr.task_target:
-            if target.tt_type == TaskTargetType.LEARNSKILL and \
-                len(self.owner.actor_attr.learned_skills) >= len(target.tt_content):
-                finish_sign = True
-            elif target.tt_type == TaskTargetType.SKILLLEVEL:
-                learned_skills = self.owner.actor_attr.learned_skills
-                for s in learned_skills:
-                    if s.curr_skill_level >= target.tt_content:
-                        finish_sign = True
-                        break
-            elif target.tt_type == TaskTargetType.ITEM:
-                if target.tt_content in self.owner.bag.get_items() and \
-                    target.tt_amount <= self.owner.bag.get_a_item(target.tt_content):
-                    self.owner.bag.remove_items(target.tt_content, target.tt_amount)
-                    finish_sign = True
-            elif target.tt_type == TaskTargetType.NONE and \
-                self._find_a_running_task(task_id).curr_index == len(task_attr.task_dialogs) - 1:
-                finish_sign = True
-            else:
-                finish_sign = False
-                break
+        running_task = self._find_a_running_task(task_id)
+        self.running_tasks.remove(running_task)
+        self.finished_tasks.append(task_id)
         
-        if finish_sign:
-            running_task = self._find_a_running_task(task_id)
-            self.running_tasks.remove(running_task)
-            self.finished_tasks.append(task_id)
-            
-            for reward in task_attr.task_reward:
-                if reward.tr_type == TaskRewardType.SKILLPOINTS:
-                    self.owner.actor_attr.skill_points += int(reward.tr_content)
-                elif reward.tr_type == TaskRewardType.EXP:
-                    self.owner.actor_attr.exp += int(reward.tr_content)
-                elif reward.tr_type == TaskRewardType.GOLD:
-                    self.owner.actor_attr.gold += int(reward.tr_content)
-                elif reward.tr_type == TaskRewardType.ITEMS:
-                    self.owner.bag.add_items(reward.tr_content, reward.tr_amount)
-                elif reward.tr_type == TaskRewardType.NPCS:
-                    self.owner.actor_attr.knew_npcids.append(reward.tr_content)
+        for reward in task_attr.task_reward:
+            self._distribute_a_reward(reward)
     
-        return finish_sign
+        return True
+
+    def _distribute_a_reward(self, reward):
+        if reward.tr_type == TaskRewardType.SKILLPOINTS:
+            self.owner.actor_attr.skill_points += int(reward.tr_content)
+        elif reward.tr_type == TaskRewardType.EXP:
+            self.owner.actor_attr.exp += int(reward.tr_content)
+        elif reward.tr_type == TaskRewardType.GOLD:
+            self.owner.actor_attr.gold += int(reward.tr_content)
+        elif reward.tr_type == TaskRewardType.ITEMS:
+            self.owner.bag.add_items(reward.tr_content, reward.tr_amount)
+        elif reward.tr_type == TaskRewardType.NEWNPC:
+            self.owner.actor_attr.knew_npcids.append(reward.tr_content)
 
     def _find_running_tasks_ids(self):
         """
@@ -227,7 +276,6 @@ if __name__ == "__main__":
     from utils.proto.se_world_pb2 import PlayerAttr
     from components.bag import Bag
     from components.skills import Skills
-    from utils.helpers.skills_helper import SkillsHelper
     from core.world.se_world import SEWorld
     from core.actor.actor import Actor
     
@@ -274,4 +322,3 @@ if __name__ == "__main__":
             player.tasks.tick()
     except KeyboardInterrupt:
         player.tasks.tick()
-        print('\n', player.tasks)

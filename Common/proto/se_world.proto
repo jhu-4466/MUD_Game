@@ -31,9 +31,17 @@ message NumericAttr {
     int32 speed = 10;
 }
 
+enum TaskCombatState {
+    WIN = 0;
+    LOSE = 1;
+    UNKNOWN = 2;
+}
+
 message RunningTask {
     string task_id = 1;
     int32 curr_index = 2;
+    string assigned_npcid = 3;
+    TaskCombatState combat_state = 4;
 }
 
 message TeamInfo {
@@ -194,13 +202,11 @@ message TaskReward {
 enum TaskProcessType {
     DIALOGS = 0;
     COMBAT = 1;
-    ITEM = 2;
+    ITEM = 2;  // including craft
     SKILLS = 3;
     SKILLLEVELS = 4;
     LEVELS = 5;
-    NONE = 6;
-    CRAFTING = 7;  // 制作东西
-    FIND = 8;  // 找人
+    FIND = 7;  // 找人
 }
 
 message TaskProcess {
@@ -208,11 +214,11 @@ message TaskProcess {
     // when DIALOGS, it should be a text; when COMBAT, it should be a npc id;
     // when ITEM, it should be items ids; and so on. 
     repeated string tp_content = 2;
-    repeated int32 npc_combatplan_index = 3;
+    int32 npc_combatplan_index = 3;
     repeated int32 items_amount = 4;
     // when COMBAT, ITEM, CRAFTING,
     // extendly give the reward standard to combat component.
-    TaskReward tp_reward = 10;
+    repeated TaskReward tp_reward = 10;
 }
 
 message TaskAttr {
@@ -220,7 +226,7 @@ message TaskAttr {
     repeated TaskProcess task_process = 4;
     repeated TaskReward task_reward = 6;
     repeated TaskTriggerConditions trigger_conditions = 8;
-    string assigned_npcid = 9;  // a task is only associated with a npc, but a npc may has many tasks.
+    string assigned_npcid = 9;  // just at the first time for trigger
     // the below things are just used in a client editor.
     string task_name = 2;  
     string task_desc = 3;

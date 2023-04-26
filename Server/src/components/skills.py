@@ -178,7 +178,7 @@ class Skills(Component):
         
         return True
     
-    def find_the_skill_level(self, target_id):
+    def find_a_skill_level(self, target_id):
         """
         
         find the curr level of the skill
@@ -191,6 +191,20 @@ class Skills(Component):
                 return skill.curr_skill_level
         
         return None
+    
+    def find_highest_skill_level(self):
+        """
+        
+        find the highest skill level
+
+        """
+        highest_level = 0
+        
+        for skill in self.learned_skills:
+            highest_level = \
+                skill.curr_skill_level if highest_level <= skill.curr_skill_level else highest_level
+        
+        return highest_level
     
     def _find_learned_skills_ids(self):
         """

@@ -15,15 +15,17 @@ sys.path.append("../../")
 
 
 from core.session.se_session import SESession
-
+from core.actor.actor import ActorFactory
 from components.teams.team_manager import TeamManager
 from components.combats.combat_manager import CombatManager
+
 from utils.helpers.skills_helper import SkillsHelper
 from utils.helpers.tasks_helper import TasksHelper
 from utils.helpers.npcs_helper import NPCsHelper
-
-from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
+from utils.singleton_type import SingletonType
+
+from utils.proto.se_world_pb2 import ActorType
 
 import multiprocessing
 
@@ -82,6 +84,8 @@ class SEWorld(metaclass=SingletonType):
         """
         while True:
             # reload_helper.refresh()
+            if not self.combat_manager.combats:
+                break
             
             self.combat_manager.tick(1 / 30)
     
@@ -123,39 +127,65 @@ class SEWorld(metaclass=SingletonType):
         for session in self.sessions.values():
             session.connection.write_message(message)
     
-    def add_a_combat(self, combat_a_id, combat_b_id):
+    def add_a_combat(self, combat_a_id, combat_b_id, npc_combatplan_index=None, running_task=None):
         team_a_id, team_b_id = combat_a_id, combat_b_id
         if "TEAM" not in team_a_id:
             team_a_id = self.team_manager.add_a_team(team_a_id)
         if "TEAM" not in team_b_id:
+            if "NPC" in team_b_id:
+                npc = ActorFactory.create_actor(ActorType.NPC, self)
+                npc.load_proto(self.team_manager.find_a_team(team_a_id).captain, combat_b_id, npc_combatplan_index)
+                self.npcs[npc.id] = npc
+                team_b_id = npc.id
             team_b_id = self.team_manager.add_a_team(team_b_id)
         
-        self.combat_manager.add_a_combat(team_a_id, team_b_id)
+        self.combat_manager.add_a_combat(team_a_id, team_b_id, running_task)
 
 
 if __name__ == "__main__":
-    from tests.attr_test import player_attr, npc_attr
+    from tests.attr_test import player_attr
     from actors.player import Player
     from actors.npc import NPC
     
     world = SEWorld(
-        skill_file="F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
-        task_file="F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json")
+        skill_file = "F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
+        task_file = "F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json",
+        npc_file = "F:/CodeProjects/MUD_Game/Server/src/tests/npcs.json")
     world.players[player_attr.basic_attr.actor_id] = Player(world)
-    world.npcs[npc_attr.basic_attr.actor_id] = NPC(world)
     player = world.players[player_attr.basic_attr.actor_id]
-    npc = world.npcs[npc_attr.basic_attr.actor_id]
     player.actor_attr = player_attr
-    npc.actor_attr = npc_attr
     
     # it need to update component attr, pay attention!
+    player.id = player_attr.basic_attr.actor_id
     player.skills = player_attr
-    npc.skills = npc_attr
-
-    world.add_a_combat(player.actor_attr.basic_attr.actor_id, npc.actor_attr.basic_attr.actor_id)
-
-    try:   
-        world.tick()
+    player.tasks.tick()
+    
+    try:
+        while True:
+            if not world.combat_manager.combats:
+                s = input("请输入你的操作：").split(' ')
+                if s[0] == "trigger":
+                    print(player.tasks.trigger_a_task(s[1], s[2]))
+                    print(world.tasks_helper.find_a_task(s[1]).task_process[
+                        player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+                elif s[0] == "next":
+                    print(player.tasks.task_next_step(s[1], s[2]))
+                    try:
+                        print(world.tasks_helper.find_a_task(s[1]).task_process[
+                            player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+                    except AttributeError:
+                        print(player.tasks)
+                        print(player.actor_attr)
+                elif s[0] == "finish":
+                    print(player.tasks.finish_a_task(s[1], s[2]))
+                elif s[0] == "show":
+                    print(player.tasks)
+                elif s[0] == "learn":
+                    print(player.skills.learn_skill(s[1]))
+                else:
+                    print("please check your order!")
+                player.tasks.tick()
+            else:
+                world.tick()
     except KeyboardInterrupt:
         sys.exit()
-    

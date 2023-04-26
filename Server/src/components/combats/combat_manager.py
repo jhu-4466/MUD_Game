@@ -35,17 +35,17 @@ class CombatManager(Component):
         
         self.combats = []  # A dictionary to store all combat instances
 
-    def add_a_combat(self, team_a_id, team_b_id):
+    def add_a_combat(self, team_a_id, team_b_id, running_task):
         """
         Add a new combat instance to the scene.
 
         Args:
-            player (Player): The player object participating in the combat.
-            npc (NPC): The NPC object participating in the combat.
+            team_a_id (Player): must player team.
+            team_b_id (NPC / Player): must npc team or other player team.
         """
         combat_id = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + \
             f"{team_a_id}_{team_b_id}"
-        combat_instance = Combat(self, combat_id, None, team_a_id, team_b_id)
+        combat_instance = Combat(self, combat_id, None, team_a_id, team_b_id, running_task)
         self.combats.append(combat_instance)
 
     def remove_a_combat(self, combat):
@@ -55,6 +55,7 @@ class CombatManager(Component):
         Args:
             combat: a combat instance
         """
+        print('????')
         self.combats.remove(combat)
         del combat
 

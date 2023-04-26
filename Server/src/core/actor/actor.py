@@ -12,7 +12,6 @@
 # -----------------------------
 
 
-from core.world.se_world import SEWorld
 from utils.proto.se_world_pb2 import ActorType, ActorAttr
 
 import logging
@@ -51,7 +50,7 @@ class Actor(metaclass=ActorMeta):
     def __init__(self, world):
         self.id: str = 0
         self.name: str = ""
-        self.____world____: "SEWorld" = world
+        self.____world____ = world
         self.____components_map____ = {}
         self.initialize()
 

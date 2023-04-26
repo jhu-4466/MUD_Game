@@ -40,10 +40,28 @@ class NPC(Actor):
         super().__init__(world)
     
     def on_initialize(self):
-        # when connecting the database, it should complete a function like load_proto to change the attr during init.
-        
         self.skills = Skills(self)
         self.add_component("skills", self.skills)
+    
+    def load_proto(self, player, npc_id, combatplan_index):
+        self.____player____ = player
+        
+        self.id = npc_id + player.replace('P', '')
+        self.npc_id = npc_id
+        
+        npc_attr = self.world.npcs_helper.find_a_npc(self.npc_id)
+        self.actor_attr.CopyFrom(npc_attr)
+        combat_plan = npc_attr.combat_plans[combatplan_index]
+        self.actor_attr.numeric_attr.CopyFrom(combat_plan.numeric_attr)
+        self.actor_attr.learned_skills.extend(combat_plan.learned_skills)
+        self.actor_attr.combat_orders.extend(combat_plan.combat_orders)
+        self.actor_attr.combat_order_index = combat_plan.combat_order_index
+        
+        self.skills = self.actor_attr
+    
+    @property
+    def player(self):
+        return self.____player____
 
 
 if __name__ == "__main__":
