@@ -37,6 +37,8 @@ class Tasks(Component):
         self.standby_tasks = self.owner.actor_attr.standby_tasks
         self.running_tasks = self.owner.actor_attr.running_tasks
         self.finished_tasks = self.owner.actor_attr.finished_tasks
+        
+        self.tasks_helper = self.owner.world.tasks_helper
 
     def load_proto(self, value):
         """
@@ -54,7 +56,7 @@ class Tasks(Component):
         update three task lists.
         
         """        
-        standard_tasks = self.owner.world.tasks_helper.standard_tasks
+        standard_tasks = self.tasks_helper.standard_tasks
         
         for task_id, task_attr in standard_tasks.items():
             if task_id in self.finished_tasks:
@@ -89,7 +91,7 @@ class Tasks(Component):
         Returns:
             bool: whether trigger successly
         """        
-        task_attr = self.owner.world.tasks_helper.find_a_task(task_id)
+        task_attr = self.tasks_helper.find_a_task(task_id)
         if task_id not in self.standby_tasks or task_attr.assigned_npcid != npc_id:
             return False
         
@@ -115,7 +117,7 @@ class Tasks(Component):
             return False
         
         running_task = self._find_a_running_task(task_id)
-        running_task_attr = self.owner.world.tasks_helper.find_a_task(running_task.task_id)
+        running_task_attr = self.tasks_helper.find_a_task(running_task.task_id)
         if running_task_attr.assigned_npcid != npc_id:
             return False
         
@@ -135,7 +137,7 @@ class Tasks(Component):
         Returns:
             bool: whether finish successly
         """  
-        task_attr = self.owner.world.tasks_helper.find_a_task(task_id)
+        task_attr = self.tasks_helper.find_a_task(task_id)
         if npc_id not in self.owner.actor_attr.knew_npcids or \
             npc_id != task_attr.assigned_npcid:
             return False

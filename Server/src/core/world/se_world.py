@@ -20,6 +20,7 @@ from components.teams.team_manager import TeamManager
 from components.combats.combat_manager import CombatManager
 from utils.helpers.skills_helper import SkillsHelper
 from utils.helpers.tasks_helper import TasksHelper
+from utils.helpers.npcs_helper import NPCsHelper
 
 from utils.singleton_type import SingletonType
 from utils.helpers import reload_helper
@@ -35,7 +36,8 @@ class SEWorld(metaclass=SingletonType):
     Args:
         sessions: tornado connection
     """
-    def __init__(self, skill_file, task_file):
+    def __init__(self, npc_file, skill_file, task_file):
+        self.npc_file = npc_file
         self.skill_file = skill_file
         self.task_file = task_file
         
@@ -50,6 +52,9 @@ class SEWorld(metaclass=SingletonType):
         self.sessions = {}
         
         self.skilltree_helper = None
+        self.tasks_helper = None
+        self.npcs_helper = None
+        
         self.team_manager = None
         self.combat_manager = None
         
@@ -58,6 +63,7 @@ class SEWorld(metaclass=SingletonType):
     def on_initialize(self):
         reload_helper.setup()
         
+        self.npcs_helper = NPCsHelper(self, self.npc_file)
         self.tasks_helper = TasksHelper(self, self.task_file)
         self.skills_helper = SkillsHelper(self, self.skill_file)
         

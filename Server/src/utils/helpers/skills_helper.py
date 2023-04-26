@@ -24,6 +24,7 @@ class SkillsHelper:
     maintains the standard skills.
     
     Args:
+        owner: the game world
         file_path: skill data file.
         ____standard_skills____: standard all skills.
     """

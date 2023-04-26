@@ -115,10 +115,18 @@ message NPCCombatOrder {
     ActorType choice_team = 4;
 }
 
+message NPCCombatPlan {
+    NumericAttr numeric_attr = 1;
+    repeated LearnedSkill learned_skills = 2;  // 已学技能
+    repeated NPCCombatOrder combat_orders = 3;  // 出招顺序
+    int32 combat_order_index = 4;
+}
+
 message NPCAttr {
     ActorAttr basic_attr = 1;
-    NumericAttr numeric_attr = 2;
-    int32 level = 3;
+    repeated NPCCombatPlan combat_plans = 2;
+    // the below things are none at the first time.
+    NumericAttr numeric_attr = 3;
     repeated LearnedSkill learned_skills = 4;  // 已学技能
     repeated NPCCombatOrder combat_orders = 5;  // 出招顺序
     int32 combat_order_index = 6;
@@ -159,13 +167,6 @@ message SkillAttr {
     repeated string preconditions = 10;  // preconditions when someone want to learn the skill, holding IDs
 }
 
-// enum TaskStatus {
-//     STANDBY = 0;  // When actor satisfy the preconditions
-//     RUNNING = 1;
-//     FINISHED = 2;
-//     UNAVAILBLE = 3;  // if actor don't satisfy the preconditions
-// }
-
 enum TaskTriggerConditionsType {
     LEVEL = 0;
     PRETASK = 1;
@@ -174,19 +175,6 @@ enum TaskTriggerConditionsType {
 message TaskTriggerConditions {
     TaskTriggerConditionsType tc_type = 1;  // level, pretask
     string tc_content = 2;
-}
-
-enum TaskTargetType {
-    LEARNSKILL = 0;  // 学习技能
-    SKILLLEVEL = 1;  // 技能等级
-    ITEM = 2;  // 物品
-    NONE = 3;
-}
-
-message TaskTarget {
-    TaskTargetType tt_type = 1; // 任务目标
-    string tt_content = 2;
-    int32 tt_amount = 3;  // 如果是item，将需要明确数量
 }
 
 enum TaskRewardType {
@@ -203,15 +191,39 @@ message TaskReward {
     string tr_amount = 3;  // 如果奖励item，将需要明确数量
 }
 
+enum TaskProcessType {
+    DIALOGS = 0;
+    COMBAT = 1;
+    ITEM = 2;
+    SKILLS = 3;
+    SKILLLEVELS = 4;
+    LEVELS = 5;
+    NONE = 6;
+    CRAFTING = 7;  // 制作东西
+    FIND = 8;  // 找人
+}
+
+message TaskProcess {
+    TaskProcessType tp_type = 1;
+    // when DIALOGS, it should be a text; when COMBAT, it should be a npc id;
+    // when ITEM, it should be items ids; and so on. 
+    repeated string tp_content = 2;
+    repeated int32 npc_combatplan_index = 3;
+    repeated int32 items_amount = 4;
+    // when COMBAT, ITEM, CRAFTING,
+    // extendly give the reward standard to combat component.
+    TaskReward tp_reward = 10;
+}
+
 message TaskAttr {
     string task_id = 1;  // Txxx
-    string task_name = 2;
-    string task_desc = 3;
-    repeated string task_dialogs = 4;
-    repeated TaskTarget task_target = 5;
+    repeated TaskProcess task_process = 4;
     repeated TaskReward task_reward = 6;
     repeated TaskTriggerConditions trigger_conditions = 8;
     string assigned_npcid = 9;  // a task is only associated with a npc, but a npc may has many tasks.
+    // the below things are just used in a client editor.
+    string task_name = 2;  
+    string task_desc = 3;
 }
 
 enum CombatState {
@@ -250,17 +262,23 @@ message SynthesisMaterial {
     int32 amount = 2;
 }
 
+enum ItemSource {
+    SYSTEM = 0;
+    CRAFT = 1;
+}
+
 message Item {
     // 物品单项
     string item_id = 1;
     ItemType item_type = 2;
-    string name = 3;
-    string description = 4;
-    int32 price = 5;  // 对系统售价
+    ItemSource item_source = 3;
+    string name = 4;
+    string description = 5;
+    int32 price = 6;  // 对系统售价
     // 弹性变形：当外力去掉后能恢复到原来的形状和尺寸的变形。
     // 塑性变形：当外力去掉后不能恢复到原来的形状和尺寸的变形。
-    float hardness = 6;  // 硬度：金属材料在受力时抵抗弹性变形的能力。
-    float strength = 7;  // 强度：金属材料在外力作用下抵抗塑性变形和断裂的能力。
-    float stiffness = 8;  // 刚度：金属材料抵抗更硬的物体压入其内的能力。
-    string datetime = 9;
+    float hardness = 7;  // 硬度：金属材料在受力时抵抗弹性变形的能力。
+    float strength = 8;  // 强度：金属材料在外力作用下抵抗塑性变形和断裂的能力。
+    float stiffness = 9;  // 刚度：金属材料抵抗更硬的物体压入其内的能力。
+    string datetime = 10;
 }

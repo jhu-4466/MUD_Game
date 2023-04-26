@@ -23,6 +23,7 @@ class TasksHelper:
     maintains the standard tasks.
     
     Args:
+        owner: the game world
         file_path: tasks data file.
         ____standard_tasks____: standard all tasks.
     """

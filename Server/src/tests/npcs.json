@@ -1,0 +1,15 @@
+[
+    {
+        "basic_attr": {
+            "actor_id": "NPC003",
+            "actor_name": "许廷秀",
+            "actor_type": 2
+        },
+        "combat_plans": [{
+            "numeric_attr": {"level": 10, "hp": 200, "mp": 500, "physical_damage": 100, "magical_damage": 50, "physical_defence": 80, "magical_defence": 60},
+            "learned_skills": [{"skill_id": "S000", "curr_skill_level": 1}, {"skill_id": "W003", "curr_skill_level": 1}],
+            "combat_orders": [{"action_id": "S000", "choice_standard": 1, "choice_level": 1, "choice_team": 1}, {"action_id": "W003", "choice_standard": 2, "choice_level": 1, "choice_team": 1}],
+            "combat_order_index": 0
+        }]
+    }
+]

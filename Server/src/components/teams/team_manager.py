@@ -23,6 +23,7 @@ class TeamManager(Component):
     a team manager component holds on all teams instances in the world.
     
     Args:
+        owner: the game world
         teams: all teams instances in the world.
     """
     component_name: str = "TeamManager"
