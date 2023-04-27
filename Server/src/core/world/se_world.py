@@ -73,8 +73,9 @@ class SEWorld(metaclass=SingletonType):
         self.combat_manager = CombatManager(self)
         
     def on_start(self):
-        self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
-        self.tick_process.start()
+        # self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
+        # self.tick_process.start()
+        self.tick()
     
     def tick(self):
         """

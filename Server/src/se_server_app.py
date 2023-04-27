@@ -27,13 +27,19 @@ class SEServerApp:
         tornado_server: tornado server app
         tornado_server_thread: tornado server thread
     """
-    def __init__(self, skill_file):
-        self.skill_file = skill_file
+    def __init__(self, skills_file, tasks_file, npcs_file):
+        self.skills_file = skills_file
+        self.tasks_file = tasks_file
+        self.npcs_file = npcs_file
         
         self.initialize()
     
     def initialize(self):
-        self.world = SEWorld(self.skill_file)
+        self.world = SEWorld(
+            npc_file = self.npcs_file,
+            skill_file = self.skills_file,
+            task_file = self.tasks_file
+        )
         self.tornado_server = TornadoServiceServer(self.world)
         self.tornado_server_thread = TornadoServerThread(self.tornado_server)
         
@@ -61,11 +67,15 @@ class SEServerApp:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-sf", "--skill_file", type=str,
-                        required=True, help="standard skill file")
+    parser.add_argument("-sf", "--skills_file", type=str,
+                        required=True, help="standard skills file")
+    parser.add_argument("-tf", "--tasks_file", type=str,
+                        required=True, help="standard tasks file")
+    parser.add_argument("-nf", "--npcs_file", type=str,
+                        required=True, help="standard npcs file")
     
     args = parser.parse_args()
-    server_app = SEServerApp(args.skill_file)
+    server_app = SEServerApp(args.skills_file, args.tasks_file, args.npcs_file)
     try:
         server_app.start()
     except KeyboardInterrupt:

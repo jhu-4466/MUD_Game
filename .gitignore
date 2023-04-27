@@ -11,3 +11,6 @@ Docs/*.odt
 
 # pb2
 *_pb2.py
+
+# venv
+sky_eye
