@@ -16,7 +16,7 @@ from core.services.tornado_service_client import TornadoServiceClient, TornadoCl
 from core.editor.editor_app import EditorMainWindow
 from core.editor.plugins.actor_attributes.plugins import ActorAttributes
 
-from PyQt5.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication
 
 import signal
 
@@ -62,7 +62,7 @@ class SEClientApp:
         for plugin in self.editor_app_main_window.plugins:
             plugin.widget.show()
         
-        self.editor_app.exec_()
+        self.editor_app.exec()
     
     def close(self):
         """

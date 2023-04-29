@@ -13,7 +13,7 @@
 
 from core.editor.apis.widgets import PluginMainWidget
 
-from PyQt5.QtWidgets import QVBoxLayout, QWidget
+from PySide6.QtWidgets import QVBoxLayout, QWidget
 
 
 class ActorAttributesWidget(PluginMainWidget):

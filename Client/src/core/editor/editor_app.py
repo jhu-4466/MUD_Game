@@ -13,9 +13,9 @@
 
 from core.editor.apis.plugins import DockableLocationEnum
 
-from PyQt5.QtWidgets import QDockWidget, QMainWindow, QApplication
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QCloseEvent, QKeyEvent
+from PySide6.QtWidgets import QDockWidget, QMainWindow, QApplication
+from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QCloseEvent, QKeyEvent
 
 
 class EditorMainWindow(QMainWindow):
@@ -29,7 +29,7 @@ class EditorMainWindow(QMainWindow):
     Signal:
         signal_close: close the main window.
     """
-    signal_close = pyqtSignal()
+    signal_close = Signal()
     
     def __init__(self):
         super().__init__()

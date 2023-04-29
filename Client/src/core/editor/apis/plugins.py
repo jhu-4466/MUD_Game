@@ -13,8 +13,8 @@
 
 from core.editor.apis.widgets import PluginMainWidget
 
-from PyQt5.QtCore import QObject, Qt
-from PyQt5.QtWidgets import QDockWidget, QWidget
+from PySide6.QtCore import QObject, Qt
+from PySide6.QtWidgets import QDockWidget, QWidget
 
 
 
