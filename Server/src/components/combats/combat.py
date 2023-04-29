@@ -411,6 +411,8 @@ class Combat(Component):
         else:
             pass
         
+        if target.actor_attr.combat_info.combat_numeric.hp <= 0:
+            self.members_state[target.actor_attr.owned_team_id] -= 1
         self._check_combat_state()
     
     def _action_finished(self, member, target):

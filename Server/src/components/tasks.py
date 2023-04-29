@@ -144,6 +144,8 @@ class Tasks(Component):
         if not next_flag:
             return False
         
+        for reward in curr_task_process.tp_reward:
+            self._distribute_a_reward(reward)
         running_task.curr_index += 1
         if running_task.curr_index == len(running_task_attr.task_process):
             self._finish_a_task(task_id, npc_id)
@@ -151,8 +153,6 @@ class Tasks(Component):
     
     def _check_combat_state(self, running_task, curr_task_process):
         if running_task.combat_state == TaskCombatState.WIN:
-            for reward in curr_task_process.tp_reward:
-                self._distribute_a_reward(reward)
             return True
         else:
             self.owner.world.add_a_combat(
@@ -168,11 +168,8 @@ class Tasks(Component):
                 return False
             if item_amount > items[item_id]:
                 return False
-            
         for item_id, item_amount in zip(curr_task_process.tp_content, curr_task_process.items_amount):
             bag.remove_items(item_id, item_amount)
-        for reward in curr_task_process.tp_reward:
-            self._distribute_a_reward(reward)
 
         return True
 

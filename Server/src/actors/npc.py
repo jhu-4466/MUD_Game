@@ -10,7 +10,6 @@
 #         m14           v0.5        2023/04/22      basic build simply
 # -----------------------------
 
-
 from core.actor.actor import Actor
 from components.skills import Skills
 
@@ -67,5 +66,7 @@ class NPC(Actor):
 if __name__ == "__main__":
     from core.world.se_world import SEWorld
     
-    npc = NPC(SEWorld("F:/CodeProjects/MUD_Game/Server/src/tests/skills.json"))
-    print(npc.actor_attr)
+    npc = NPC(SEWorld(skill_file="F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
+                      task_file="F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json",
+                      npc_file="F:/CodeProjects/MUD_Game/Server/src/tests/npcs.json"))
+    npc.load_proto('P000001', "NPC003", 0)
