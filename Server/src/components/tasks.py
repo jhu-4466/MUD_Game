@@ -219,6 +219,13 @@ class Tasks(Component):
         return True
 
     def _distribute_a_reward(self, reward):
+        """
+        
+        distribute a reward one time.
+        
+        Returns:
+            reward (TaskReward): reward content.
+        """
         if reward.tr_type == TaskRewardType.SKILLPOINTS:
             self.owner.actor_attr.skill_points += int(reward.tr_content)
         elif reward.tr_type == TaskRewardType.EXP:
