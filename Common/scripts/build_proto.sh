@@ -23,9 +23,6 @@ while [[ $# -gt 0 ]]; do
             shift
             shift
             ;;
-        -c)
-            shift
-            ;;
         -h|--help)
             handbook
             exit 0
