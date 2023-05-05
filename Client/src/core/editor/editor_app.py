@@ -13,12 +13,12 @@
 
 from core.editor.apis.plugins import DockableLocationEnum
 
-from PySide6.QtWidgets import QDockWidget, QMainWindow, QApplication
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtWidgets import QDockWidget, QApplication
+from PySide6.QtCore import Qt, Signal, QFile
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 
 
-class EditorMainWindow(QMainWindow):
+class EditorMainWindow(QWidget):
     """
     
     Editor main window.
@@ -51,6 +51,13 @@ class EditorMainWindow(QMainWindow):
         init main window ui.
         
         """
+        style_file = QFile('../resources/ui/mainwindow/mainwindow.qss')
+        style_file.open(QFile.ReadOnly | QFile.Text)
+        style = style_file.readAll()
+        style = bytes(style).decode('utf-8')
+        self.setStyleSheet(style)
+        
+        self.setWindowTitle("天眼")
         self.setFixedSize(1024, 768)
 
     def register_plugin(self, plugin):
@@ -59,6 +66,7 @@ class EditorMainWindow(QMainWindow):
         all plugins register.
         
         """
+        return
         widget = plugin.widget
         dock_widget = QDockWidget(plugin.NAME, self)
         dock_widget.setWidget(widget)

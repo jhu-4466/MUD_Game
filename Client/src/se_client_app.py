@@ -17,6 +17,7 @@ from core.editor.editor_app import EditorMainWindow
 from core.editor.plugins.actor_attributes.plugins import ActorAttributes
 
 from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QFile
 
 import signal
 
@@ -56,7 +57,7 @@ class SEClientApp:
         Runs SE_Client_App.
 
         """
-        self.editor_app_communication_thread.start()
+        # self.editor_app_communication_thread.start()
         
         self.editor_app_main_window.show()
         for plugin in self.editor_app_main_window.plugins:
