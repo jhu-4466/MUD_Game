@@ -289,6 +289,11 @@ class SECloseButton(SETitleBarButton):
     Close button
 
     """
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        
+        self.set_hover_bg_color(QColor(255, 0, 0))
+    
     def paintEvent(self, event):
         painter = QPainter(self)
         color, bg_color = self._get_colors()
