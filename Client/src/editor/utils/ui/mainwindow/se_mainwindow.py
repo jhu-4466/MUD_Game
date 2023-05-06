@@ -36,6 +36,11 @@ class MainWindow(QWidget):
     def set_icon(self, icon):
         self.titlebar.set_icon(icon)
 
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        
+        self.titlebar.resize(self.width(), self.titlebar.height())
+
 
 if __name__ == '__main__':
     app = QApplication([])
