@@ -17,6 +17,9 @@ from PySide6.QtWidgets import QAbstractButton, QHBoxLayout, QLabel, QWidget
 
 from enum import Enum
 import sys
+import win32api
+import win32gui
+import win32con
 
 
 class SETitleBarButtonState(Enum):
@@ -428,14 +431,49 @@ class SETitleBar(QWidget):
 
         self._toggle_max_state()
 
+    def _is_drag_region(self, pos):
+        """ 
+        
+        Check whether the position belongs to the area where dragging is allowed 
+        
+        """
+        width = 0
+        for button in self.findChildren(SETitleBarButton):
+            if button.isVisible():
+                width += button.width()
+
+        return 0 < pos.x() < self.width() - width
+
+    def _has_button_pressed(self):
+        """ 
+        
+        whether any button is pressed
+        
+        """
+        return any(btn.isPressed() for btn in self.findChildren(SETitleBarButton))
+
+    def can_drag(self, pos):
+        """ 
+        
+        whether the position is draggable
+        
+        """
+        return self._is_drag_region(pos) and not self._has_button_pressed()
+
     def mouseMoveEvent(self, event):
-        if sys.platform != "win32" or not self.canDrag(event.pos()):
+        if sys.platform != "win32" or not self.can_drag(event.pos()):
             return
 
-        pass
+        win32gui.ReleaseCapture()
+        win32api.SendMessage(
+            int(self.window().winId()),
+            win32con.WM_SYSCOMMAND,
+            win32con.SC_MOVE | win32con.HTCAPTION,
+            0
+        )
 
     def mousePressEvent(self, event):
-        if sys.platform != "win32" or not self.canDrag(event.pos()):
+        if sys.platform != "win32" or not self.can_drag(event.pos()):
             return
 
         pass
