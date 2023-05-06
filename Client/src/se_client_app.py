@@ -11,13 +11,10 @@
 # -----------------------------
 
 
-from core.services.tornado_service_client import TornadoServiceClient, TornadoClientThread
-
-from core.editor.editor_app import EditorMainWindow
-from core.editor.plugins.actor_attributes.plugins import ActorAttributes
+from services.tornado_service_client import TornadoServiceClient, TornadoClientThread
+from editor.editor_app import EditorMainWindow
 
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QFile
 
 import signal
 
@@ -42,14 +39,6 @@ class SEClientApp:
         self.editor_app.setQuitOnLastWindowClosed(True)
         self.editor_app_main_window = EditorMainWindow()
         self.editor_app_main_window.signal_close.connect(self.close)
-        
-        # Register widget plugins
-        actor_attributes_plugin = ActorAttributes(self.editor_app_main_window)
-        actor_attributes_plugin.initialize()
-        self.editor_app_main_window.plugins = [actor_attributes_plugin]
-        
-        for plugin in self.editor_app_main_window.plugins:
-            self.editor_app_main_window.register_plugin(plugin)
         
     def start(self):
         """

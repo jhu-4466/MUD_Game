@@ -11,7 +11,7 @@
 # -----------------------------
 
 
-from core.editor.apis.widgets import PluginMainWidget
+from editor.apis.widgets import PluginMainWidget
 
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtWidgets import QDockWidget, QWidget

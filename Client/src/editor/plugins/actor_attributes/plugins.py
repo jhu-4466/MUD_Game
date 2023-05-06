@@ -11,7 +11,8 @@
 # -----------------------------
 
 
-from core.editor.apis.plugins import DockableLocationEnum, DockablePluginBase
+from editor.apis.plugins import DockableLocationEnum, DockablePluginBase
+
 from .widgets import ActorAttributesWidget
 
 

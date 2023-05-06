@@ -11,14 +11,15 @@
 # -----------------------------
 
 
-from core.editor.apis.plugins import DockableLocationEnum
+from editor.apis.plugins import DockableLocationEnum
+from editor.plugins.actor_attributes.plugins import ActorAttributes
 
-from PySide6.QtWidgets import QDockWidget, QApplication
-from PySide6.QtCore import Qt, Signal, QFile
+from PySide6.QtWidgets import QDockWidget, QApplication, QMainWindow
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 
 
-class EditorMainWindow(QWidget):
+class EditorMainWindow(QMainWindow):
     """
     
     Editor main window.
@@ -34,6 +35,8 @@ class EditorMainWindow(QWidget):
     def __init__(self):
         super().__init__()
         
+        self.plugins = []
+        
         self.init_plugins()
         self.init_ui()
     
@@ -43,7 +46,14 @@ class EditorMainWindow(QWidget):
         init main window plugins and attributes.
         
         """
-        self.plugins = []
+        # Register widget plugins
+        self.actor_attributes_plugin = ActorAttributes(self)
+        self.actor_attributes_plugin.initialize()
+        
+        self.plugins = [self.actor_attributes_plugin]
+        
+        for plugin in self.plugins:
+            self.register_plugin(plugin)
     
     def init_ui(self):
         """
@@ -51,14 +61,8 @@ class EditorMainWindow(QWidget):
         init main window ui.
         
         """
-        style_file = QFile('../resources/ui/mainwindow/mainwindow.qss')
-        style_file.open(QFile.ReadOnly | QFile.Text)
-        style = style_file.readAll()
-        style = bytes(style).decode('utf-8')
-        self.setStyleSheet(style)
-        
         self.setWindowTitle("天眼")
-        self.setFixedSize(1024, 768)
+        self.setFixedSize(1024, 576)
 
     def register_plugin(self, plugin):
         """
@@ -66,7 +70,6 @@ class EditorMainWindow(QWidget):
         all plugins register.
         
         """
-        return
         widget = plugin.widget
         dock_widget = QDockWidget(plugin.NAME, self)
         dock_widget.setWidget(widget)
