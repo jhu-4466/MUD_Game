@@ -7,7 +7,7 @@
 # Description: se mainwindow titlebar and titlebar buttons ui
 # History:
 # <autohr>    <version>    <date>        <desc>
-# motm14         v0.1    2023/05/    basic build
+# motm14         v0.1    2023/05/06    basic build
 # -----------------------------
 
 
