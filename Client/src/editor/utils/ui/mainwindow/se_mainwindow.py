@@ -12,14 +12,17 @@
 
 
 from se_titlebar import SETitleBar
+from se_menubar import SEMenuBar
 
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette, QColor
 
 
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowMinMaxButtonsHint)
         
         self.setFixedSize(1024, 576)
@@ -27,8 +30,26 @@ class MainWindow(QWidget):
         self.init_ui()
     
     def init_ui(self):
+        self.mainlayout = QVBoxLayout(self)
+        self.mainlayout.setContentsMargins(0, 0, 0, 0)
+        self.mainlayout.setSpacing(0)
+        self.mainlayout.setAlignment(Qt.AlignTop | Qt.AlignLeft)
+        
+        # title bar & title menu bar
+        self.titlelayout = QVBoxLayout()
+        self.titlelayout.setContentsMargins(0, 0, 0, 0)
+        self.titlelayout.setSpacing(0)
         self.titlebar = SETitleBar(self)
-        self.titlebar.raise_()
+        self.menubar = SEMenuBar(self)
+        self.titlelayout.addWidget(self.titlebar)
+        self.titlelayout.addWidget(self.menubar)
+        
+        self.mainlayout.addLayout(self.titlelayout)
+        
+        # style
+        palette = QPalette()
+        palette.setColor(self.backgroundRole(), QColor(255, 255, 255, 128))
+        self.setPalette(palette)
 
     def set_title(self, title):
         self.titlebar.set_title(title)

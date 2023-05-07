@@ -56,7 +56,7 @@ class SETitleBarButton(QAbstractButton):
         self.____pressed_color____ = QColor(156, 156, 156)
 
         # background color
-        self.____normal_bg_color____ = QColor(128, 128, 128, 0)
+        self.____normal_bg_color____ = QColor(64, 64, 64)
         self.____hover_bg_color____ = QColor(100, 100, 100, 26)
         self.____pressed_bg_color____ = QColor(156, 156, 156, 51)
 
