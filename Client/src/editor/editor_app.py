@@ -14,12 +14,15 @@
 from editor.apis.plugins import DockableLocationEnum
 from editor.plugins.actor_attributes.plugins import ActorAttributes
 
-from PySide6.QtWidgets import QDockWidget, QApplication, QMainWindow
+from editor.utils.ui.mainwindow import SEMainWindow
+from editor.utils.ui.tabwidget import SETabWidget
+
+from PySide6.QtWidgets import QApplication, QSizePolicy
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 
 
-class EditorMainWindow(QMainWindow):
+class EditorMainWindow(SEMainWindow):
     """
     
     Editor main window.
@@ -35,10 +38,8 @@ class EditorMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         
-        self.plugins = []
-        
-        self.init_plugins()
         self.init_ui()
+        self.init_plugins()
     
     def init_plugins(self):
         """
@@ -61,8 +62,17 @@ class EditorMainWindow(QMainWindow):
         init main window ui.
         
         """
-        self.setWindowTitle("天眼")
-        self.setFixedSize(1024, 576)
+        self.set_title("天眼")
+        self.setFixedSize(1280, 720)
+        
+        self.left_widgets = SETabWidget(self)
+        self.central_widgets = SETabWidget(self)
+        self.right_widgets = SETabWidget(self)
+        self.widgets_layout.addWidget(self.left_widgets, 2)
+        self.widgets_layout.addWidget(self.central_widgets, 5)
+        self.widgets_layout.addWidget(self.right_widgets, 2)
+        
+        self.widgets_layout
 
     def register_plugin(self, plugin):
         """
@@ -70,19 +80,12 @@ class EditorMainWindow(QMainWindow):
         all plugins register.
         
         """
-        widget = plugin.widget
-        dock_widget = QDockWidget(plugin.NAME, self)
-        dock_widget.setWidget(widget)
-        dock_widget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)  #  | Qt.TopDockWidgetArea
-
         if plugin.DOCK_LOCATION == DockableLocationEnum.LEFT:
-            self.addDockWidget(Qt.LeftDockWidgetArea, dock_widget)
+            self.left_widgets.addTab(plugin.widget, plugin.NAME)
         elif plugin.DOCK_LOCATION == DockableLocationEnum.RIGHT:
-            self.addDockWidget(Qt.RightDockWidgetArea, dock_widget)
-        elif plugin.DOCK_LOCATION == DockableLocationEnum.BOTTOM:
-            self.addDockWidget(Qt.BottomDockWidgetArea, dock_widget)
+            self.right_widgets.addTab(plugin.widget, plugin.NAME)
         else:
-            self.setCentralWidget(widget)
+            self.central_widgets.addTab(plugin.widget, plugin.NAME)
 
     def closeEvent(self, event: QCloseEvent):
         """
@@ -92,7 +95,7 @@ class EditorMainWindow(QMainWindow):
         """
         self.signal_close.emit()
         event.ignore()
-        
+    
     def keyPressEvent(self, event: QKeyEvent):
         """
         

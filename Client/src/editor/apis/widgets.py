@@ -26,6 +26,7 @@ class PluginMainWidget(QWidget):
     """
     def __init__(self, name, plugin, parent=None):
         super().__init__(parent=parent)
+        
         self._name = name
         self._plugin = plugin
         self._parent = parent
