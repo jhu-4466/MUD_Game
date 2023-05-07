@@ -63,14 +63,14 @@ class EditorMainWindow(SEMainWindow):
         
         """
         self.set_title("天眼")
-        self.setFixedSize(1280, 720)
+        self.setFixedSize(1366, 768)
         
         self.left_widgets = SETabWidget(self)
         self.central_widgets = SETabWidget(self)
         self.right_widgets = SETabWidget(self)
-        self.widgets_layout.addWidget(self.left_widgets, 2)
-        self.widgets_layout.addWidget(self.central_widgets, 5)
-        self.widgets_layout.addWidget(self.right_widgets, 2)
+        self.widgets_layout.addWidget(self.left_widgets, 5)
+        self.widgets_layout.addWidget(self.central_widgets, 9)
+        self.widgets_layout.addWidget(self.right_widgets, 4)
         
         self.widgets_layout
 
