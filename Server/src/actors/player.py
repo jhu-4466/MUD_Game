@@ -64,11 +64,15 @@ class Player(Actor):
         for component in self.____components_map____.values():
             component.tick(delta_time)
 
-    def add_item(self, item_id: int, count: int):
-        self.bag.add_item(item_id, count)
+    # def add_item(self, item_id: str, count: int):
+    #     self.bag.add_item(item_id, count)
+    
+    # TO DO: FIND OUT THE LOGIC TO ADD ITEMS
+    def add_a_item(self, item_id: str, item_guid: int):
+        self.bag.add_a_item(item_id, item_guid)
 
-    def remove_item(self, item_id: int, count: int):
-        self.bag.remove_item(item_id, count)
+    def remove_items(self, item_id: str, count: int):
+        self.bag.remove_items(item_id, count)
 
     def get_items(self):
         return self.bag.get_items()
