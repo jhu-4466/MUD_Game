@@ -16,9 +16,11 @@ sys.path.append("../../")
 
 from core.session.se_session import SESession
 from core.actor.actor import ActorFactory
+from core.item.item_manager import ItemManager
 from components.teams.team_manager import TeamManager
 from components.combats.combat_manager import CombatManager
 
+from utils.helpers.items_helper import ItemsHelper
 from utils.helpers.skills_helper import SkillsHelper
 from utils.helpers.tasks_helper import TasksHelper
 from utils.helpers.npcs_helper import NPCsHelper
@@ -38,10 +40,11 @@ class SEWorld(metaclass=SingletonType):
     Args:
         sessions: tornado connection
     """
-    def __init__(self, npc_file, skill_file, task_file):
+    def __init__(self, npc_file, skill_file, task_file, item_file):
         self.npc_file = npc_file
         self.skill_file = skill_file
         self.task_file = task_file
+        self.item_file = item_file
         
         self.initialize()
     
@@ -56,9 +59,11 @@ class SEWorld(metaclass=SingletonType):
         self.skilltree_helper = None
         self.tasks_helper = None
         self.npcs_helper = None
+        self.items_helper = None
         
         self.team_manager = None
         self.combat_manager = None
+        self.item_manager = None
         
         self.on_initialize()
     
@@ -68,9 +73,11 @@ class SEWorld(metaclass=SingletonType):
         self.npcs_helper = NPCsHelper(self, self.npc_file)
         self.tasks_helper = TasksHelper(self, self.task_file)
         self.skills_helper = SkillsHelper(self, self.skill_file)
+        self.items_helper = ItemsHelper(self, self.item_file)
         
         self.team_manager = TeamManager(self)
         self.combat_manager = CombatManager(self)
+        self.item_manager = ItemManager(self)
         
     def on_start(self):
         # self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
@@ -143,50 +150,103 @@ class SEWorld(metaclass=SingletonType):
         self.combat_manager.add_a_combat(team_a_id, team_b_id, running_task)
 
 
+# if __name__ == "__main__":
+#     from tests.attr_test import player_attr
+#     from actors.player import Player
+#     from actors.npc import NPC
+    
+#     world = SEWorld(
+#         skill_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/skills.json",
+#         task_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json",
+#         npc_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json")
+#     world.players[player_attr.basic_attr.actor_id] = Player(world)
+#     player = world.players[player_attr.basic_attr.actor_id]
+#     player.actor_attr = player_attr
+    
+#     # it need to update component attr, pay attention!
+#     player.id = player_attr.basic_attr.actor_id
+#     player.skills = player_attr
+#     player.tasks.tick()
+    
+#     try:
+#         while True:
+#             if not world.combat_manager.combats:
+#                 s = input("请输入你的操作：").split(' ')
+#                 if s[0] == "trigger":
+#                     print(player.tasks.trigger_a_task(s[1], s[2]))
+#                     print(world.tasks_helper.find_a_task(s[1]).task_process[
+#                         player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+#                 elif s[0] == "next":
+#                     print(player.tasks.task_next_step(s[1], s[2]))
+#                     try:
+#                         print(world.tasks_helper.find_a_task(s[1]).task_process[
+#                             player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+#                     except AttributeError:
+#                         print(player.tasks)
+#                         print(player.actor_attr)
+#                 elif s[0] == "finish":
+#                     print(player.tasks.finish_a_task(s[1], s[2]))
+#                 elif s[0] == "show":
+#                     print(player.tasks)
+#                 elif s[0] == "learn":
+#                     print(player.skills.learn_skill(s[1]))
+#                 else:
+#                     print("please check your order!")
+#                 player.tasks.tick()
+#             else:
+#                 world.tick()
+#     except KeyboardInterrupt:
+#         sys.exit()
+
+
+#-------------test for item and bag-------------
 if __name__ == "__main__":
-    from tests.attr_test import player_attr
+    from tests.attr_test import player1_attr, player2_attr
     from actors.player import Player
     from actors.npc import NPC
     
     world = SEWorld(
-        skill_file = "F:/CodeProjects/MUD_Game/Server/src/tests/skills.json",
-        task_file = "F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json",
-        npc_file = "F:/CodeProjects/MUD_Game/Server/src/tests/npcs.json")
-    world.players[player_attr.basic_attr.actor_id] = Player(world)
-    player = world.players[player_attr.basic_attr.actor_id]
-    player.actor_attr = player_attr
+        skill_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/skills.json",
+        task_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json",
+        npc_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json",
+        item_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/items.json")
+    world.players[player1_attr.basic_attr.actor_id] = Player(world)
+    world.players[player2_attr.basic_attr.actor_id] = Player(world)
+    player1 = world.players[player1_attr.basic_attr.actor_id]
+    player1.actor_attr = player2_attr
+    player2 = world.players[player2_attr.basic_attr.actor_id]
+    player2.actor_attr = player2_attr
     
-    # it need to update component attr, pay attention!
-    player.id = player_attr.basic_attr.actor_id
-    player.skills = player_attr
-    player.tasks.tick()
+    # give a item_id to complete create item and assign it.
+    item1 = world.item_manager.create_a_item("E0001", player1_attr.basic_attr.actor_id)
+    item2 = world.item_manager.create_a_item("C0001", player1_attr.basic_attr.actor_id)
+    item3 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
+    item4 = world.item_manager.create_a_item("M0002", player1_attr.basic_attr.actor_id)
+    items_of_palyer1 = [item1, item2, item3, item4]
     
-    try:
-        while True:
-            if not world.combat_manager.combats:
-                s = input("请输入你的操作：").split(' ')
-                if s[0] == "trigger":
-                    print(player.tasks.trigger_a_task(s[1], s[2]))
-                    print(world.tasks_helper.find_a_task(s[1]).task_process[
-                        player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
-                elif s[0] == "next":
-                    print(player.tasks.task_next_step(s[1], s[2]))
-                    try:
-                        print(world.tasks_helper.find_a_task(s[1]).task_process[
-                            player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
-                    except AttributeError:
-                        print(player.tasks)
-                        print(player.actor_attr)
-                elif s[0] == "finish":
-                    print(player.tasks.finish_a_task(s[1], s[2]))
-                elif s[0] == "show":
-                    print(player.tasks)
-                elif s[0] == "learn":
-                    print(player.skills.learn_skill(s[1]))
-                else:
-                    print("please check your order!")
-                player.tasks.tick()
-            else:
-                world.tick()
-    except KeyboardInterrupt:
-        sys.exit()
+    item5 = world.item_manager.create_a_item("E0001", player1_attr.basic_attr.actor_id)
+    item6 = world.item_manager.create_a_item("C0001", player1_attr.basic_attr.actor_id)
+    item7 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
+    item8 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
+    items_of_palyer2 = [item5, item6, item7, item8]
+    
+    
+    for item in items_of_palyer1:
+        player1.bag.add_a_item(item.item_attr.item_id, item.item_guid)   
+    for item in items_of_palyer2:
+        player2.bag.add_a_item(item.item_attr.item_id, item.item_guid)
+    
+    print("-----------ItemManager_Items---------:\n", world.item_manager.items)
+    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.____items____)
+    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.____items____)
+    
+    
+    player1.bag.remove_items(item1.item_attr.item_id, 1)
+    print(f"\n\n-------after player1 remove (itemid:{item1.item_attr.item_id}, item_guid:{item1.item_guid})---------:")
+    print("\n---------ItemManager_Items----------:\n")
+    for key1 in world.item_manager.items.keys():
+        for key2 in world.item_manager.items[key1]:
+            print(f"item_id: {key1}--->item_guid: {key2}")
+    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.____items____)
+    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.____items____)
+    
