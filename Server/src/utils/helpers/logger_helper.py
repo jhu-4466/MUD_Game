@@ -6,7 +6,7 @@
 # Created: 2023.04.12
 # Description: logger helper
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/12    basic build
 #    m14         v0.5         2023/04/16    more complete build
 # -----------------------------

@@ -2,12 +2,12 @@
 
 # -----------------------------
 # Topic: actor information plugin
-# Author: motm14
+# Author: m14
 # Created: 2023.04.10
 # Description: actor information plugin
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    motm14         v0.1         2023/04/10    build the basic
+#    <author>    <version>    <time>        <desc>
+#    m14         v0.1         2023/04/10    build the basic
 # -----------------------------
 
 

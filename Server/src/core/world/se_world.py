@@ -6,7 +6,7 @@
 # Created: 2023.04.11
 # Description: maintains sky eye world state
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/11    basic build
 # -----------------------------
 # test
@@ -203,7 +203,6 @@ class SEWorld(metaclass=SingletonType):
 if __name__ == "__main__":
     from tests.attr_test import player1_attr, player2_attr
     from actors.player import Player
-    from actors.npc import NPC
     
     world = SEWorld(
         skill_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/skills.json",
@@ -217,19 +216,19 @@ if __name__ == "__main__":
     player2 = world.players[player2_attr.basic_attr.actor_id]
     player2.actor_attr = player2_attr
     
-    # give a item_id to complete create item and assign it.
-    item1 = world.item_manager.create_a_item("E0001", player1_attr.basic_attr.actor_id)
-    item2 = world.item_manager.create_a_item("C0001", player1_attr.basic_attr.actor_id)
-    item3 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
-    item4 = world.item_manager.create_a_item("M0002", player1_attr.basic_attr.actor_id)
-    items_of_palyer1 = [item1, item2, item3, item4]
+    # give a item_id player_id and source_id to complete create item and assign it.
+    source_id = ["system_reward", "combat1_reward", "task_reward", "grade_reward"]
+    item_id1 = ["E0001", "C0001","M0001","M0002"]
+    items_of_palyer1 = []
+    for i in range(4):
+        item = world.item_manager.create_a_item(item_id1[i], player1_attr.basic_attr.actor_id, source_id[i])
+        items_of_palyer1.append(item)
     
-    item5 = world.item_manager.create_a_item("E0001", player1_attr.basic_attr.actor_id)
-    item6 = world.item_manager.create_a_item("C0001", player1_attr.basic_attr.actor_id)
-    item7 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
-    item8 = world.item_manager.create_a_item("M0001", player1_attr.basic_attr.actor_id)
-    items_of_palyer2 = [item5, item6, item7, item8]
-    
+    item_id2 = ["E0001", "C0001","M0001","M0001"]
+    items_of_palyer2 = []
+    for i in range(4):
+        item = world.item_manager.create_a_item(item_id2[i], player1_attr.basic_attr.actor_id, source_id[i])
+        items_of_palyer2.append(item)
     
     for item in items_of_palyer1:
         player1.bag.add_a_item(item.item_attr.item_id, item.item_guid)   
@@ -237,16 +236,16 @@ if __name__ == "__main__":
         player2.bag.add_a_item(item.item_attr.item_id, item.item_guid)
     
     print("-----------ItemManager_Items---------:\n", world.item_manager.items)
-    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.____items____)
-    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.____items____)
+    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
+    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
     
     
-    player1.bag.remove_items(item1.item_attr.item_id, 1)
-    print(f"\n\n-------after player1 remove (itemid:{item1.item_attr.item_id}, item_guid:{item1.item_guid})---------:")
+    player1.bag.remove_items(items_of_palyer1[0].item_attr.item_id, 1)
+    print(f"\n\n-------after player1 remove (itemid:{items_of_palyer1[0].item_attr.item_id}, item_guid:{items_of_palyer1[0].item_guid})---------:")
     print("\n---------ItemManager_Items----------:\n")
     for key1 in world.item_manager.items.keys():
         for key2 in world.item_manager.items[key1]:
             print(f"item_id: {key1}--->item_guid: {key2}")
-    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.____items____)
-    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.____items____)
+    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
+    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
     

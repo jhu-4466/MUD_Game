@@ -6,14 +6,14 @@
 # Created: 2023.04.16
 # Description: a bag component
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/16      basic build
-#         liuyuqi       v0.5.0      2023/05/08      adjust
+#         liuyuqi       v0.5.0      2023/05/08      add and remove item
 # -----------------------------
 
 
 from core.component.component import Component
-from core.item.item_manager import ItemManager
+
 class Bag(Component):
     """
 
@@ -131,11 +131,11 @@ class Bag(Component):
                 items[item_id].append(self.get_a_item(item_id, item_guid))
         return items
     
-    def get_a_item(self, item_id, item_guid):
+    def get_a_item(self, item_id: str, item_guid: str):
         item = self.owner.world.item_manager.find_a_item(item_id, item_guid)
         return item
     
-    def get_item_amount(self, item_id):
+    def get_item_amount(self, item_id: str):
         try: 
             return len(self.____items____[item_id])
         except:

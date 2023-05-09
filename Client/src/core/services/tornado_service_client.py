@@ -7,7 +7,7 @@
 # Description: holding the control of tornado client to connect with tornado server
 #              ususal port：8080
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/07    build the basic
 # -----------------------------
 

@@ -2,7 +2,6 @@
     {
         "item_id": "E0001", 
         "item_type": 0,
-        "item_source": 1,
         "item_name": "gold ring",
         "item_image": "D://",
         "description": "You can buy something with it.",
@@ -15,7 +14,6 @@
     },{
         "item_id": "C0001",
         "item_type": 1,
-        "item_source": 1,
         "item_name": "stimulant",
         "item_image": "D://",
         "description": "Enhence your damage in a combat.",
@@ -28,7 +26,6 @@
     }, {
         "item_id": "M0001",
         "item_type": 2,
-        "item_source": 0,
         "item_name": "copper billet",
         "item_image": "D://",
         "description": "You can use it to build weapons.",
@@ -43,7 +40,6 @@
     
         "item_id": "M0002",
         "item_type": 2,
-        "item_source": 0,
         "item_name": "iron billet",
         "item_image": "D://",
         "description": "You can use it to build weapons.",

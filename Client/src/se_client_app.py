@@ -2,12 +2,12 @@
 
 # -----------------------------
 # Topic: client main app
-# Author: motm14
+# Author: m14
 # Created: 2023.04.09
 # Description: the main client including interface and communication.
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    motm14         v0.1         2023/04/09    build the basic
+#    <author>    <version>    <time>        <desc>
+#    m14         v0.1         2023/04/09    build the basic
 # -----------------------------
 
 

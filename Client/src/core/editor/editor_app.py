@@ -2,12 +2,12 @@
 
 # -----------------------------
 # Topic: editor main window
-# Author: motm14
+# Author: m14
 # Created: 2023.04.09
 # Description: the game editor including all plugins.
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    motm14         v0.1         2023/04/09    build the basic
+#    <author>    <version>    <time>        <desc>
+#    m14         v0.1         2023/04/09    build the basic
 # -----------------------------
 
 
