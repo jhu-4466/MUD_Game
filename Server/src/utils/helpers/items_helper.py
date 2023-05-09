@@ -6,7 +6,7 @@
 # Created: 2023/05/06
 # Description: 
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    liuyuqi      v0.5.0      2023/05/06   basic build
 # -----------------------------
 
@@ -59,16 +59,8 @@ class ItemsHelper:
             item_attr = ParseDict(item, ItemAttr())
             self.standard_items[item_attr.item_id] = item_attr
         items_json.close()
-    
-    def find_a_price(self, item_id):
-        try:
-            return self.____standard_items____[item_id].price
-        except:
-            return None
         
-    
-    
-    def find_a_item_attr(self, item_id):
+    def find_a_item(self, item_id: str):
         """
 
         by item_id, finds the item attr in stanard item
@@ -83,27 +75,6 @@ class ItemsHelper:
         except:
             return None
     
-# -------------test
-     
-# data = {
-#     "item_id": "E0001",
-#     "item_type": 0,
-#     "item_source": 0,
-#     "item_name": "gold ring",
-#     "item_image": "D://",
-#     "description": "You can buy something with it.",
-#     "price": 50,
-#     "equipment_attr": {
-#         "damage": 10,
-#         "defense": 11,
-#         "durability": 12
-#     }
-# }
-
-# item_attr = ItemAttr()
-# item_attr = ParseDict(data, item_attr)
-
-# print(item_attr)
     
         
 

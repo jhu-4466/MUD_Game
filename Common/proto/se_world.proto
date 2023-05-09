@@ -261,12 +261,6 @@ message SynthesisMaterial {
     int32 amount = 2;
 }
 
-enum ItemSource {
-    SYSTEM = 0;
-    CRAFT = 1;
-}
-
-
 enum ItemType{
     // 物品种类
     EQUIPMENT = 0;
@@ -292,20 +286,18 @@ message MaterialAttr {
     float strength = 3;  // 强度
 }
 
-
 message ItemAttr{
     // 物品单项
     string item_id = 1;
     ItemType item_type = 2;
-    ItemSource item_source = 3;
-    string item_name = 4;
-    string item_image = 5;
-    string description = 6;
-    int32 price = 7;  // 对系统售价
+    string item_name = 3;
+    string item_image = 4;
+    string description = 5;
+    int32 price = 6;  // 对系统售价
 
     oneof item_extra_attr {
-        EquipmentAttr equipment_attr = 8;
-        ConsumableAttr consumable_attr = 9;
-        MaterialAttr material_attr = 10;
+        EquipmentAttr equipment_attr = 7;
+        ConsumableAttr consumable_attr = 8;
+        MaterialAttr material_attr = 9;
     }
 }

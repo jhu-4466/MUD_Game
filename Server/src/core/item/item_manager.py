@@ -6,10 +6,9 @@
 # Created: 2023/05/05
 # Description: 
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    liuyuqi      v0.5.0      2023/05/05   basic build
+#    <author>    <version>    <time>        <desc>
+#    liuyuqi      v0.5.0      2023/05/05   create and destory item
 # -----------------------------
-
 
 
 import random
@@ -33,7 +32,7 @@ class ItemManager:
         self.owner = owner
         self.items = {}
 
-    def create_a_item(self, item_id, player_id) -> Item:
+    def create_a_item(self, item_id: str, player_id: str, source_id: str) -> Item:
         
         """
         create a item according to the item_id and assign it to the player by player_id
@@ -41,13 +40,15 @@ class ItemManager:
         Args: 
             item_id: str
             player_id: str
+            source_id: str
         Return:
-            item
+            item: dataclass
         """   
         
-        item_guid, item_datetime = self.generate_guid(item_id)  
-        item_attr = self.owner.items_helper.find_a_item_attr(item_id)
-        item = Item(item_guid, item_datetime, player_id, item_attr)
+        item_guid, item_datetime = self._generate_guid(item_id)
+        item_attr = self.owner.items_helper.find_a_item(item_id)
+        
+        item = Item(item_guid, item_datetime, player_id, source_id, item_attr)
 
         if item_id not in self.items:
             self.items[item_id] = { item_guid: item}
@@ -55,15 +56,19 @@ class ItemManager:
             self.items[item_id][item_guid] = item
         return item
     
-    
-    def generate_guid(self, item_id):
-        '''
+    def _generate_guid(self, item_id: str):
+        """
         to generate a unique GUID of item specified item_type.
         GUID Structure: timestamp-item_id-random-counter
         Example: 20230507174515-00001-1A783-00000001
           len          14        any     5      8
-        
-        '''
+          
+        Args:
+            item_id: str
+        Return:
+            guid: str
+            item_datetime: str
+        """
         item_timestamp = datetime.datetime.now().timestamp()
         item_random = random.randint(0, 0xFFFFF)
         dt = datetime.datetime.fromtimestamp(item_timestamp)
@@ -77,22 +82,7 @@ class ItemManager:
         self.item_counter += 1
         return guid, item_datetime
     
-    def find_a_item(self, item_id, item_guid):
-        """
-        Find a item assigned with item_id and item_guid
-
-        Args: 
-            item_id: str
-            item_guid: str
-        Return:
-            item
-        """
-        try:
-            return self.items[item_id][item_guid]
-        except:
-            return None
-
-    def destroy_a_item(self, item_id, item_guid):
+    def destroy_a_item(self, item_id: str, item_guid: str):
         """
         Destory a item instance from the items dictionary.
 
@@ -106,6 +96,39 @@ class ItemManager:
                 del self.items[item_id][item_guid]
                 return True
         return False
+    
+    def find_a_item(self, item_id: str, item_guid: str):
+        """
+        Find a item assigned with item_id and item_guid
+
+        Args: 
+            item_id: str
+            item_guid: str
+        Return:
+            item
+        """
+        try:
+            return self.items[item_id][item_guid]
+        except:
+            return None
+    
+    def find_a_price(self, item_id: str, item_guid: str):
+        """
+        Find the price of item  with item_id and item_guid
+
+        Args: 
+            item_id: str
+            item_guid: str
+        Return:
+            price: int
+        """
+        try:
+            return self.items[item_id][item_guid].item_attr.price
+        except:
+            return None
+        
+
+    
 
         
         
