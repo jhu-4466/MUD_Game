@@ -1,0 +1,59 @@
+[
+    {
+        "item_id": "E0001", 
+        "item_type": 0,
+        "item_source": 1,
+        "item_name": "gold ring",
+        "item_image": "D://",
+        "description": "You can buy something with it.",
+        "price": 50,
+        "equipment_attr": {
+            "damage": 10,
+            "defense": 11,
+            "durability": 12
+        }
+    },{
+        "item_id": "C0001",
+        "item_type": 1,
+        "item_source": 1,
+        "item_name": "stimulant",
+        "item_image": "D://",
+        "description": "Enhence your damage in a combat.",
+        "price": 100,
+        "consumable_attr": {
+            "recover_hp": 13,
+            "recover_mp": 14,
+            "effect_duration":15
+        }
+    }, {
+        "item_id": "M0001",
+        "item_type": 2,
+        "item_source": 0,
+        "item_name": "copper billet",
+        "item_image": "D://",
+        "description": "You can use it to build weapons.",
+        "price": 3333,
+        "material_attr":{
+            "hardness": 16,
+            "density": 17,
+            "strength": 18
+        }
+    }
+    ,{
+    
+        "item_id": "M0002",
+        "item_type": 2,
+        "item_source": 0,
+        "item_name": "iron billet",
+        "item_image": "D://",
+        "description": "You can use it to build weapons.",
+        "price": 1111,
+        "material_attr":{
+            "hardness": 19,
+            "density": 20,
+            "strength": 21
+        }
+    }
+    
+    
+]
