@@ -150,18 +150,21 @@ class SEWorld(metaclass=SingletonType):
         self.combat_manager.add_a_combat(team_a_id, team_b_id, running_task)
 
 
-# if __name__ == "__main__":
-#     from tests.attr_test import player_attr
-#     from actors.player import Player
-#     from actors.npc import NPC
+if __name__ == "__main__":
+    from tests.attr_test import player1_attr, player2_attr
+    from actors.player import Player
     
-#     world = SEWorld(
-#         skill_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/skills.json",
-#         task_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json",
-#         npc_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json")
-#     world.players[player_attr.basic_attr.actor_id] = Player(world)
-#     player = world.players[player_attr.basic_attr.actor_id]
-#     player.actor_attr = player_attr
+    world = SEWorld(
+        skill_file = "../../tests/skills.json",
+        task_file = "../../tests/tasks.json",
+        npc_file = "../../tests/npcs.json",
+        item_file = "../../tests/items.json")
+    world.players[player1_attr.basic_attr.actor_id] = Player(world)
+    world.players[player2_attr.basic_attr.actor_id] = Player(world)
+    player1 = world.players[player1_attr.basic_attr.actor_id]
+    player1.actor_attr = player2_attr
+    player2 = world.players[player2_attr.basic_attr.actor_id]
+    player2.actor_attr = player2_attr
     
 #     # it need to update component attr, pay attention!
 #     player.id = player_attr.basic_attr.actor_id
@@ -197,24 +200,6 @@ class SEWorld(metaclass=SingletonType):
 #                 world.tick()
 #     except KeyboardInterrupt:
 #         sys.exit()
-
-
-#-------------test for item and bag-------------
-if __name__ == "__main__":
-    from tests.attr_test import player1_attr, player2_attr
-    from actors.player import Player
-    
-    world = SEWorld(
-        skill_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/skills.json",
-        task_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json",
-        npc_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json",
-        item_file = "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/items.json")
-    world.players[player1_attr.basic_attr.actor_id] = Player(world)
-    world.players[player2_attr.basic_attr.actor_id] = Player(world)
-    player1 = world.players[player1_attr.basic_attr.actor_id]
-    player1.actor_attr = player2_attr
-    player2 = world.players[player2_attr.basic_attr.actor_id]
-    player2.actor_attr = player2_attr
     
     # give a item_id player_id and source_id to complete create item and assign it.
     source_id = ["system_reward", "combat1_reward", "task_reward", "grade_reward"]
@@ -243,9 +228,9 @@ if __name__ == "__main__":
     player1.bag.remove_items(items_of_palyer1[0].item_attr.item_id, 1)
     print(f"\n\n-------after player1 remove (itemid:{items_of_palyer1[0].item_attr.item_id}, item_guid:{items_of_palyer1[0].item_guid})---------:")
     print("\n---------ItemManager_Items----------:\n")
-    for key1 in world.item_manager.items.keys():
-        for key2 in world.item_manager.items[key1]:
-            print(f"item_id: {key1}--->item_guid: {key2}")
+    for item_id, items in world.item_manager.items.items():
+        for item_guid in items:
+            print(f"item_id: {item_id}--->item_guid: {item_guid}")
     print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
     print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
     

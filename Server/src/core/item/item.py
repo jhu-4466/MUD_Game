@@ -11,8 +11,9 @@
 # -----------------------------
 
 
-from dataclasses import dataclass, field
 from utils.proto.se_world_pb2 import ItemAttr
+
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -23,12 +24,10 @@ class Item:
         
     """
     item_guid: str
-    item_datetime: str
-    assign_id: str
+    created_time: str
+    assigned_id: str
     item_source: str
     item_attr: ItemAttr = field(default_factory=ItemAttr) 
     
     def __post_init__(self):        
         pass
-   
-        

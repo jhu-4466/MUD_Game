@@ -108,7 +108,7 @@ class Bag(Component):
             self.____items____[item_id].pop()
             
             # NEED TO DO: 
-            #       modify the assign_id according the guid
+            #       modify the assigned_id according the guid
         self.owner.actor_attr.gold += self.items_helper.find_a_price(item_id) * item_amount
         
     def buy_item(self, item_id: int, item_amount: int):

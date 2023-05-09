@@ -22,18 +22,16 @@ class ItemManager:
     manages all item instances happening in the system to generate the unique guid and a timestamp.
     self.items = {item_id: {GUID: item, ...}, ...}
     
-    Args:
+    Attributes:
         owner: the game world
         items: all the items in the world
     """
-    item_counter: int = 0
-    
     def __init__(self, owner):
         self.owner = owner
+
         self.items = {}
 
     def create_a_item(self, item_id: str, player_id: str, source_id: str) -> Item:
-        
         """
         create a item according to the item_id and assign it to the player by player_id
 
@@ -44,14 +42,13 @@ class ItemManager:
         Return:
             item: dataclass
         """   
-        
-        item_guid, item_datetime = self._generate_guid(item_id)
+        item_guid, created_time = self._generate_guid(item_id)
         item_attr = self.owner.items_helper.find_a_item(item_id)
         
-        item = Item(item_guid, item_datetime, player_id, source_id, item_attr)
+        item = Item(item_guid, created_time, player_id, source_id, item_attr)
 
         if item_id not in self.items:
-            self.items[item_id] = { item_guid: item}
+            self.items[item_id] = {item_guid: item}
         else: 
             self.items[item_id][item_guid] = item
         return item
@@ -67,20 +64,16 @@ class ItemManager:
             item_id: str
         Return:
             guid: str
-            item_datetime: str
+            created_time: str
         """
-        item_timestamp = datetime.datetime.now().timestamp()
-        item_random = random.randint(0, 0xFFFFF)
-        dt = datetime.datetime.fromtimestamp(item_timestamp)
-        
-        item_datetime = dt.strftime('%Y%m%d%H%M%S')
-        
-        guid = item_datetime
+        created_time = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+
+        guid = created_time
         guid += '-{}'.format(item_id)
-        guid += '-{:05X}'.format(item_random & 0xFFFFF)
-        guid += '-{:08X}'.format(self.item_counter & 0xFFFFFFFF)
-        self.item_counter += 1
-        return guid, item_datetime
+        guid += '-{:05X}'.format(random.randint(0, 0xFFFFF) & 0xFFFFF)
+        guid += '-{:08X}'.format(len(self.items[item_id]) + 1 if item_id in self.items else 1
+                                 & 0xFFFFFFFF)
+        return guid, created_time
     
     def destroy_a_item(self, item_id: str, item_guid: str):
         """

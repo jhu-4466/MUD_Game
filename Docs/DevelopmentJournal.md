@@ -269,7 +269,7 @@
 
 ## 2023.05.05
 ### 已完成事务：
-1. 定义了item的数据结构为dataclass进行存储：包括item_guid、item_datetime、assign_id和基础item_attr四个属性，添加了item helper可完成数据加载、价格查询和item_attr查询。
+1. 定义了item的数据结构为dataclass进行存储：包括item_guid、created_time、assign_id和基础item_attr四个属性，添加了item helper可完成数据加载、价格查询和item_attr查询。
 2. 重写了message ItemAttr，增加了item_image字段存储图片信息，增加了oneof类型的item_extra_attr，包括三个可选属性EquipmentAttr、ConsumableAttr、MaterialAttr，根据item_type匹配。
 ### 目标事务
 1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；

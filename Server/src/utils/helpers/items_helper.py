@@ -57,7 +57,8 @@ class ItemsHelper:
         
         for item in items_data:
             item_attr = ParseDict(item, ItemAttr())
-            self.standard_items[item_attr.item_id] = item_attr
+            self.____standard_items____[item_attr.item_id] = item_attr
+
         items_json.close()
         
     def find_a_item(self, item_id: str):
