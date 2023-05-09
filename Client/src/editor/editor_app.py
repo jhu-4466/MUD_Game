@@ -17,7 +17,7 @@ from editor.plugins.actor_attributes.plugins import ActorAttributes
 from editor.utils.ui.mainwindow import SEMainWindow
 from editor.utils.ui.tabwidget import SETabWidget
 
-from PySide6.QtWidgets import QApplication, QSizePolicy
+from PySide6.QtWidgets import QApplication
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QCloseEvent, QKeyEvent
 

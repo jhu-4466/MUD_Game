@@ -53,12 +53,11 @@ class SkillsHelper:
         
         """
         skills_json = open(self.file_path, 'r', encoding="utf-8")
-        skills_data = json.load(skills_json)
+        skills = json.load(skills_json)
         
-        for skill_tree in skills_data:
-            for skill in skill_tree:
-                skill_attr = ParseDict(skill, SkillAttr())
-                self.____standard_skills____[skill_attr.skill_id] = skill_attr
+        for skill in skills:
+            skill_attr = ParseDict(skill, SkillAttr())
+            self.____standard_skills____[skill_attr.skill_id] = skill_attr
         
         skills_json.close()
     
@@ -89,3 +88,7 @@ class SkillsHelper:
             damage = int(damage_str)
         
         return damage
+    
+
+if __name__ == "__main__":
+    a = SkillsHelper(None, "F:/CodeProjects/MUD_Game/Server/src/tests/skills.json")
