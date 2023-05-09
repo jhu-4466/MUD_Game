@@ -13,19 +13,22 @@
 import sys
 sys.path.append("../../")
 
+from controllers.item_controller import ItemController
+from controllers.team_controller import TeamController
+from controllers.combat_controller import CombatController
+
+from helpers.items_helper import ItemsHelper
+from helpers.skills_helper import SkillsHelper
+from helpers.tasks_helper import TasksHelper
+from helpers.npcs_helper import NPCsHelper
+
+from utils import reload_helper
+from utils.singleton_type import SingletonType
 
 from core.session.se_session import SESession
 from core.actor.actor import ActorFactory
-from core.item.item_manager import ItemManager
-from components.teams.team_manager import TeamManager
-from components.combats.combat_manager import CombatManager
-
-from utils.helpers.items_helper import ItemsHelper
-from utils.helpers.skills_helper import SkillsHelper
-from utils.helpers.tasks_helper import TasksHelper
-from utils.helpers.npcs_helper import NPCsHelper
-from utils.helpers import reload_helper
-from utils.singleton_type import SingletonType
+from actors.npc import NPC
+from actors.player import Player
 
 from utils.proto.se_world_pb2 import ActorType
 
@@ -75,9 +78,9 @@ class SEWorld(metaclass=SingletonType):
         self.skills_helper = SkillsHelper(self, self.skill_file)
         self.items_helper = ItemsHelper(self, self.item_file)
         
-        self.team_manager = TeamManager(self)
-        self.combat_manager = CombatManager(self)
-        self.item_manager = ItemManager(self)
+        self.team_manager = TeamController(self)
+        self.combat_manager = CombatController(self)
+        self.item_manager = ItemController(self)
         
     def on_start(self):
         # self.tick_process = multiprocessing.Process(target=self.tick, daemon=True)
@@ -162,44 +165,14 @@ if __name__ == "__main__":
     world.players[player1_attr.basic_attr.actor_id] = Player(world)
     world.players[player2_attr.basic_attr.actor_id] = Player(world)
     player1 = world.players[player1_attr.basic_attr.actor_id]
-    player1.actor_attr = player2_attr
+    player1.actor_attr = player1_attr
     player2 = world.players[player2_attr.basic_attr.actor_id]
     player2.actor_attr = player2_attr
     
-#     # it need to update component attr, pay attention!
-#     player.id = player_attr.basic_attr.actor_id
-#     player.skills = player_attr
-#     player.tasks.tick()
-    
-#     try:
-#         while True:
-#             if not world.combat_manager.combats:
-#                 s = input("请输入你的操作：").split(' ')
-#                 if s[0] == "trigger":
-#                     print(player.tasks.trigger_a_task(s[1], s[2]))
-#                     print(world.tasks_helper.find_a_task(s[1]).task_process[
-#                         player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
-#                 elif s[0] == "next":
-#                     print(player.tasks.task_next_step(s[1], s[2]))
-#                     try:
-#                         print(world.tasks_helper.find_a_task(s[1]).task_process[
-#                             player.tasks._find_a_running_task(s[1]).curr_index].tp_content)
-#                     except AttributeError:
-#                         print(player.tasks)
-#                         print(player.actor_attr)
-#                 elif s[0] == "finish":
-#                     print(player.tasks.finish_a_task(s[1], s[2]))
-#                 elif s[0] == "show":
-#                     print(player.tasks)
-#                 elif s[0] == "learn":
-#                     print(player.skills.learn_skill(s[1]))
-#                 else:
-#                     print("please check your order!")
-#                 player.tasks.tick()
-#             else:
-#                 world.tick()
-#     except KeyboardInterrupt:
-#         sys.exit()
+    # it need to update component attr, pay attention!
+    player1.id = player1_attr.basic_attr.actor_id
+    player1.skills = player1_attr
+    player1.tasks.tick()
     
     # give a item_id player_id and source_id to complete create item and assign it.
     source_id = ["system_reward", "combat1_reward", "task_reward", "grade_reward"]
@@ -220,17 +193,48 @@ if __name__ == "__main__":
     for item in items_of_palyer2:
         player2.bag.add_a_item(item.item_attr.item_id, item.item_guid)
     
-    print("-----------ItemManager_Items---------:\n", world.item_manager.items)
-    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
-    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
+    print(player1.bag.items)
+    print(player2.bag.items)
+    # print("-----------ItemManager_Items---------:\n", world.item_manager.items)
+    # print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
+    # print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
     
     
-    player1.bag.remove_items(items_of_palyer1[0].item_attr.item_id, 1)
-    print(f"\n\n-------after player1 remove (itemid:{items_of_palyer1[0].item_attr.item_id}, item_guid:{items_of_palyer1[0].item_guid})---------:")
-    print("\n---------ItemManager_Items----------:\n")
-    for item_id, items in world.item_manager.items.items():
-        for item_guid in items:
-            print(f"item_id: {item_id}--->item_guid: {item_guid}")
-    print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
-    print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
+    # player1.bag.remove_items(items_of_palyer1[0].item_attr.item_id, 1)
+    # print(f"\n\n-------after player1 remove (itemid:{items_of_palyer1[0].item_attr.item_id}, item_guid:{items_of_palyer1[0].item_guid})---------:")
+    # print("\n---------ItemManager_Items----------:\n")
+    # for item_id, items in world.item_manager.items.items():
+    #     for item_guid in items:
+    #         print(f"item_id: {item_id}--->item_guid: {item_guid}")
+    # print("\n---------Player1_Bag_Items----------:\n ", player1.bag.items)
+    # print("\n---------Player2_Bag_Items----------:\n ", player2.bag.items)
     
+    try:
+        while True:
+            if not world.combat_manager.combats:
+                s = input("请输入你的操作：").split(' ')
+                if s[0] == "trigger":
+                    print(player1.tasks.trigger_a_task(s[1], s[2]))
+                    print(world.tasks_helper.find_a_task(s[1]).task_process[
+                        player1.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+                elif s[0] == "next":
+                    print(player1.tasks.task_next_step(s[1], s[2]))
+                    try:
+                        print(world.tasks_helper.find_a_task(s[1]).task_process[
+                            player1.tasks._find_a_running_task(s[1]).curr_index].tp_content)
+                    except AttributeError:
+                        print(player1.tasks)
+                        print(player1.actor_attr)
+                elif s[0] == "finish":
+                    print(player1.tasks.finish_a_task(s[1], s[2]))
+                elif s[0] == "show":
+                    print(player1.tasks)
+                elif s[0] == "learn":
+                    print(player1.skills.learn_skill(s[1]))
+                else:
+                    print("please check your order!")
+                player1.tasks.tick()
+            else:
+                world.tick()
+    except KeyboardInterrupt:
+        sys.exit()

@@ -13,9 +13,7 @@
 
 from editor.apis.widgets import PluginMainWidget
 
-from PySide6.QtCore import QObject, Qt
-from PySide6.QtWidgets import QDockWidget, QWidget
-
+from PySide6.QtCore import QObject
 
 
 class PluginBase(QObject):

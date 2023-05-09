@@ -12,12 +12,12 @@
 
 
 from core.component.component import Component
-from components.teams.team import Team
+from components.team import Team
 
 import datetime
 
 
-class TeamManager(Component):
+class TeamController(Component):
     """
     
     a team manager component holds on all teams instances in the world.
@@ -26,7 +26,7 @@ class TeamManager(Component):
         owner: the game world
         teams: all teams instances in the world.
     """
-    component_name: str = "TeamManager"
+    component_name: str = "TeamController"
     
     def __init__(self, owner):
         super().__init__(owner)

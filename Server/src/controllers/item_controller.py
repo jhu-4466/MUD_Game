@@ -11,13 +11,14 @@
 # -----------------------------
 
 
+from core.component.component import Component
+from core.item.item import Item
+
 import random
 import datetime
 
-from core.item.item import Item
 
-
-class ItemManager:
+class ItemController(Component):
     """
     manages all item instances happening in the system to generate the unique guid and a timestamp.
     self.items = {item_id: {GUID: item, ...}, ...}
@@ -27,7 +28,7 @@ class ItemManager:
         items: all the items in the world
     """
     def __init__(self, owner):
-        self.owner = owner
+        super().__init__(owner)
 
         self.items = {}
 

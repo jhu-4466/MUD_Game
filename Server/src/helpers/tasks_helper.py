@@ -77,6 +77,6 @@ class TasksHelper:
 
 
 if __name__ == "__main__":
-    a = TasksHelper("D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json")
+    a = TasksHelper("../../tests/tasks.json")
     
     print(a.standard_tasks)

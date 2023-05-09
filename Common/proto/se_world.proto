@@ -4,7 +4,7 @@ enum ActorType {
     // 角色种类
     ACTOR = 0;
     PLAYER = 1;
-    NPC = 2;  // 友好的NPC
+    NPC = 2;
 }
 
 message ActorAttr {

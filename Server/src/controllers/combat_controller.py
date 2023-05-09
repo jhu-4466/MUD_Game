@@ -12,14 +12,14 @@
 
 
 from core.component.component import Component
-from components.combats.combat import Combat
+from components.combat import Combat
 
 from utils.proto.se_world_pb2 import CombatState
 
 import datetime
 
 
-class CombatManager(Component):
+class CombatController(Component):
     """
 
     A component that manages all combat instances happening in the world.
@@ -27,7 +27,7 @@ class CombatManager(Component):
     Args:
         owner(str): belongs to one world.
     """
-    component_name: str = "CombatManager"
+    component_name: str = "CombatController"
     activate_flag: bool = False
 
     def __init__(self, owner):
