@@ -6,7 +6,7 @@
 # Created: 2023.04.11
 # Description: maintains game server and tornado server.
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/12    basic build
 # -----------------------------
 

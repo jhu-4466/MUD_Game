@@ -6,7 +6,7 @@
 # Created: 2023.04.19
 # Description: create factory regularly
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/21      basic build
 # -----------------------------
 import sys

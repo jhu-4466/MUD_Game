@@ -6,7 +6,7 @@
 # Created: 2023.04.26
 # Description: NPCs helper
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/26      basic build
 # -----------------------------
 
@@ -77,6 +77,6 @@ class NPCsHelper:
 
 
 if __name__ == "__main__":
-    a = NPCsHelper(None, "F:/CodeProjects/MUD_Game/Server/src/tests/npcs.json")
+    a = NPCsHelper(None, "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json")
     
     print(a.standard_npcs)

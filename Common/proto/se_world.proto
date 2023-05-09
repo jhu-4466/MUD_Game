@@ -7,13 +7,6 @@ enum ActorType {
     NPC = 2;  // 友好的NPC
 }
 
-enum ItemType{
-    // 物品种类
-    EQUIPMENT = 0;
-    CONSUMABLE = 1;  // 消耗品
-    MATERIAL = 2;  // 材料
-}
-
 message ActorAttr {
     string actor_id = 1;
     string actor_name = 2;
@@ -264,27 +257,47 @@ message Synthesis {
 
 message SynthesisMaterial {
     // 合成材料
-    Item item = 1;
+    string item_id = 1;
     int32 amount = 2;
 }
 
-enum ItemSource {
-    SYSTEM = 0;
-    CRAFT = 1;
+enum ItemType{
+    // 物品种类
+    EQUIPMENT = 0;
+    CONSUMABLE = 1;  // 消耗品
+    MATERIAL = 2;  // 材料
 }
 
-message Item {
+message EquipmentAttr {
+    float damage = 1;  // 伤害值
+    float defense = 2;  // 防御值
+    float durability = 3;  // 耐久度
+}
+
+message ConsumableAttr {
+    float recover_hp = 1;  // 恢复生命值
+    float recover_mp = 2;  // 恢复魔法值
+    float effect_duration = 3;  // 效果持续时间
+}
+
+message MaterialAttr {
+    float hardness = 1;  // 硬度
+    float density = 2;  // 密度
+    float strength = 3;  // 强度
+}
+
+message ItemAttr{
     // 物品单项
     string item_id = 1;
     ItemType item_type = 2;
-    ItemSource item_source = 3;
-    string name = 4;
+    string item_name = 3;
+    string item_image = 4;
     string description = 5;
     int32 price = 6;  // 对系统售价
-    // 弹性变形：当外力去掉后能恢复到原来的形状和尺寸的变形。
-    // 塑性变形：当外力去掉后不能恢复到原来的形状和尺寸的变形。
-    float hardness = 7;  // 硬度：金属材料在受力时抵抗弹性变形的能力。
-    float strength = 8;  // 强度：金属材料在外力作用下抵抗塑性变形和断裂的能力。
-    float stiffness = 9;  // 刚度：金属材料抵抗更硬的物体压入其内的能力。
-    string datetime = 10;
+
+    oneof item_extra_attr {
+        EquipmentAttr equipment_attr = 7;
+        ConsumableAttr consumable_attr = 8;
+        MaterialAttr material_attr = 9;
+    }
 }

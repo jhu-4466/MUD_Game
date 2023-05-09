@@ -7,7 +7,7 @@
 # Description: holding the control of tornado server and game server
 #              test port：8080
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/04    basic build success
 #    m14         v1.0         2023/04/11    run in an other thread
 # -----------------------------

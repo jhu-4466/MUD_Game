@@ -6,7 +6,7 @@
 # Created: 2023.04.14
 # Description: create actor regularly
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #    yangchaohuan       v0.1        2023/04/14      basic build without protobuf
 #         m14           v0.5        2023/04/15      basic build
 # -----------------------------

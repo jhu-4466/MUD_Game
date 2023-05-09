@@ -6,7 +6,7 @@
 # Created: 2023.04.16
 # Description: ____database____ helper
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.5         2023/04/16    basic build
 # -----------------------------
 

@@ -6,7 +6,7 @@
 # Created: 2023.04.15
 # Description: create factory regularly
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/15      basic build
 # -----------------------------
 

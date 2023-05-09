@@ -6,7 +6,7 @@
 # Created: 2023.04.22
 # Description: a combat manager component that keep track of all combat instances.
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/24      basic build
 # -----------------------------
 

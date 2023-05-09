@@ -6,7 +6,7 @@
 # Created: 2023.04.11
 # Description: a util for singleton type
 # History:
-#    <autohr>    <version>    <time>        <desc>
+#    <author>    <version>    <time>        <desc>
 #    m14         v0.1         2023/04/11    basic build
 # -----------------------------
 

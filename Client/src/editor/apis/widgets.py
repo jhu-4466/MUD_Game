@@ -6,8 +6,8 @@
 # Created: 2023.04.10
 # Description: the base class about widget
 # History:
-#    <autohr>    <version>    <time>        <desc>
-#    motm14         v0.1         2023/04/10    build the basic
+#    <author>    <version>    <time>        <desc>
+#    m14         v0.1         2023/04/10    build the basic
 # -----------------------------
 
 

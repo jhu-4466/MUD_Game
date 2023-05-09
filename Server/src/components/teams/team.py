@@ -6,7 +6,7 @@
 # Created: 2023.04.21
 # Description: a team component
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/      basic build
 # -----------------------------
 

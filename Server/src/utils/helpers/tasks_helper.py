@@ -6,7 +6,7 @@
 # Created: 2023.04.19
 # Description: task tree helper
 # History:
-# <autohr>       <version>      <time>        <desc>
+# <author>       <version>      <time>        <desc>
 #   m14           v0.5        2023/04/20      basic build
 # -----------------------------
 
@@ -77,6 +77,6 @@ class TasksHelper:
 
 
 if __name__ == "__main__":
-    a = TasksHelper("F:/CodeProjects/MUD_Game/Server/src/tests/tasks.json")
+    a = TasksHelper("D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/tasks.json")
     
     print(a.standard_tasks)

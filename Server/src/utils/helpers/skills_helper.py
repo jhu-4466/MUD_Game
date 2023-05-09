@@ -6,7 +6,7 @@
 # Created: 2023.04.17
 # Description: skill tree helper
 # History:
-#       <autohr>       <version>      <time>        <desc>
+#       <author>       <version>      <time>        <desc>
 #         m14           v0.5        2023/04/18      basic build
 #         m14           v0.5        2023/04/19      complete build
 # -----------------------------
