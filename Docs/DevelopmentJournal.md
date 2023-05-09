@@ -265,3 +265,51 @@
 # use database helper to commit the update
 ```
 2. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；
+
+
+## 2023.05.05
+### 已完成事务：
+1. 定义了item的数据结构为dataclass进行存储：包括item_guid、item_datetime、assign_id和基础item_attr四个属性，添加了item helper可完成数据加载、价格查询和item_attr查询。
+2. 重写了message ItemAttr，增加了item_image字段存储图片信息，增加了oneof类型的item_extra_attr，包括三个可选属性EquipmentAttr、ConsumableAttr、MaterialAttr，根据item_type匹配。
+### 目标事务
+1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；
+2. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api，还需要做 LOGIN GATE 和 GAME GATE；
+3. 服务器选择：高防？可用于防止DDos攻击；代理与反向代理；
+4. 客户端UI样式：是否可参考基于WinUI3的fluent widgets?直接用可能涉及商用。
+5. 完成背包系统数据结构、功能模块的完善。
+### 存在问题
+#### server
+1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+2. 关于world类里的各种dict，如players、sessions等，需要引入multiprocessing等类似数据结构，主要是为了高并发处理。
+#### client
+1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序关闭，后续可跟进。
+#### database
+1. 数据库的更新一般选择在游戏世界tick的时候；但当有需要数据库操作时，应该利用database helper更新database order commit，在每周期后统一更新数据库。这是后续开发方向，由于暂未配置数据库，先用统一注释备注
+```python
+# use database helper to commit the update
+```
+1. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；
+
+
+## 2023.05.08
+### 已完成事务：
+1. 更新了se_world模块和bag模块，进行了基础的item功能调试，验证了设计的item数据结构和部分功能函数。
+### 目标事务
+1. 陆续开发world各个模块。由于热更新影响，理应考虑更新前后状态的保存与延续；
+2. 最后再进行登录模块的开发，因为可能需要使用steam登录的有关api，还需要做 LOGIN GATE 和 GAME GATE；
+3. 服务器选择：高防？可用于防止DDos攻击；代理与反向代理；
+4. 客户端UI样式：是否可参考基于WinUI3的fluent widgets?直接用可能涉及商用。
+5. 完成背包系统数据结构、功能模块的完善。
+### 存在问题
+#### server
+1. 关于tornado server线程的中断依赖于daemon=True这个参数，即主线程中断时，子线程也一定会中断。这可能会造成一点问题，但目前预判影响不大，后续可跟进。
+2. 关于world类里的各种dict，如players、sessions等，需要引入multiprocessing等类似数据结构，主要是为了高并发处理。
+3. item_helper模块ParseDict()解析函数在解析item.json数据时，对枚举类型为0的数据，不能正常打印显示，需进行排查;关于item生成和放入背包的逻辑需要再进行细致考虑。
+#### client
+1. 在开发过程中无法利用ctrl+c进行强行终止进程，原因是qapplication.exec_()堵塞了主线程，所以无法读取键盘信号。现在通过signal.signal(signal.SIGINT, signal.SIG_DFL)进行特殊处理，会导致QTimer终止顺序报错，但预估不影响程序关闭，后续可跟进。
+#### database
+1. 数据库的更新一般选择在游戏世界tick的时候；但当有需要数据库操作时，应该利用database helper更新database order commit，在每周期后统一更新数据库。这是后续开发方向，由于暂未配置数据库，先用统一注释备注
+```python
+# use database helper to commit the update
+```
+1. 考虑初始状态的赋值时间，如创建player时，player attr应该以什么形式、在什么时候赋值；
