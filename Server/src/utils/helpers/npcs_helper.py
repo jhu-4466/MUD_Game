@@ -77,6 +77,6 @@ class NPCsHelper:
 
 
 if __name__ == "__main__":
-    a = NPCsHelper(None, "F:/CodeProjects/MUD_Game/Server/src/tests/npcs.json")
+    a = NPCsHelper(None, "D:/liuyuqi/SkyEye/MUD_Game/Server/src/tests/npcs.json")
     
     print(a.standard_npcs)
