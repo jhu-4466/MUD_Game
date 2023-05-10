@@ -13,6 +13,7 @@
 
 from editor.apis.plugins import DockableLocationEnum
 from editor.plugins.actor_attributes.plugins import ActorAttributes
+from editor.plugins.actor_interface.plugins import ActorInterface
 
 from editor.utils.ui.mainwindow import SEMainWindow
 from editor.utils.ui.tabwidget import SETabWidget
@@ -50,8 +51,10 @@ class EditorMainWindow(SEMainWindow):
         # Register widget plugins
         self.actor_attributes_plugin = ActorAttributes(self)
         self.actor_attributes_plugin.initialize()
+        self.actor_interface_plugin = ActorInterface(self)
+        self.actor_interface_plugin.initialize()
         
-        self.plugins = [self.actor_attributes_plugin]
+        self.plugins = [self.actor_attributes_plugin, self.actor_interface_plugin]
         
         for plugin in self.plugins:
             self.register_plugin(plugin)
@@ -94,7 +97,8 @@ class EditorMainWindow(SEMainWindow):
         
         """
         self.signal_close.emit()
-        event.ignore()
+        
+        return super().closeEvent(event)
     
     def keyPressEvent(self, event: QKeyEvent):
         """

@@ -89,7 +89,7 @@ class TornadoServiceClient:
             self.keep_alive_callback.stop()
             self.websocket.close()
         
-        # self.ioloop.add_callback(self.ioloop.stop)
+        self.ioloop.add_callback(self.ioloop.stop)
 
     def keep_alive(self):
         """
